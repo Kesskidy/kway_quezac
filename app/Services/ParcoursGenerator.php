@@ -14,25 +14,30 @@ use Random\Randomizer;
 class ParcoursGenerator
 {
     /**
-     * @return array{seed: int, tick_ms: int, duree_ticks: int, phases: list<array{debut: int, fin: int, type: string, intensite: int}>, arbres: list<array{debut: int, fin: int}>}
+     * - phases : en ticks, couvrent toute la durée maximale d'une partie ;
+     * - arbres : en mètres, le long de la course.
+     *
+     * @return array{seed: int, tick_ms: int, distance: int, duree_max_ticks: int, phases: list<array{debut: int, fin: int, type: string, intensite: int}>, arbres: list<array{debut: int, fin: int}>}
      */
     public function generer(?int $seed = null): array
     {
         $seed ??= random_int(0, 2 ** 31 - 1);
         $random = new Randomizer(new Mt19937($seed));
-        $duree = (int) config('jeu.duree_ticks');
+        $dureeMax = (int) config('jeu.duree_max_ticks');
+        $distance = (int) config('jeu.distance');
 
         return [
             'seed' => $seed,
             'tick_ms' => (int) config('jeu.tick_ms'),
-            'duree_ticks' => $duree,
-            'phases' => $this->genererPhases($random, $duree),
-            'arbres' => $this->genererArbres($random, $duree),
+            'distance' => $distance,
+            'duree_max_ticks' => $dureeMax,
+            'phases' => $this->genererPhases($random, $dureeMax),
+            'arbres' => $this->genererArbres($random, $distance),
         ];
     }
 
     /**
-     * Phases consécutives qui couvrent toute la partie, sans deux types identiques à la suite.
+     * Phases consécutives (en ticks), sans deux types identiques à la suite.
      */
     private function genererPhases(Randomizer $random, int $duree): array
     {
@@ -66,24 +71,24 @@ class ParcoursGenerator
     }
 
     /**
-     * Arbres espacés qui ne se chevauchent pas et se terminent avant la fin de la partie.
+     * Arbres (en mètres) espacés, sans chevauchement, avant la ligne d'arrivée.
      */
-    private function genererArbres(Randomizer $random, int $duree): array
+    private function genererArbres(Randomizer $random, int $distance): array
     {
         $config = config('jeu.arbres');
         $arbres = [];
-        $tick = $config['premier_apres'];
+        $metre = $config['premier_apres'];
 
         while (true) {
-            $debut = $tick + $random->getInt($config['ecart_min'], $config['ecart_max']);
-            $fin = $debut + $random->getInt($config['duree_min'], $config['duree_max']);
+            $debut = $metre + $random->getInt($config['ecart_min'], $config['ecart_max']);
+            $fin = $debut + $random->getInt($config['longueur_min'], $config['longueur_max']);
 
-            if ($fin >= $duree) {
+            if ($fin >= $distance) {
                 break;
             }
 
             $arbres[] = ['debut' => $debut, 'fin' => $fin];
-            $tick = $fin;
+            $metre = $fin;
         }
 
         return $arbres;
