@@ -2,206 +2,230 @@
 
 namespace Tests\Unit;
 
-use App\Game\GameEngine;
+use App\Services\Game\GameEngine;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class GameEngineTest extends TestCase
 {
-    private GameEngine $engine;
-
-    protected function setUp(): void
+    /**
+     * Fixed rules (regle.md section 5 defaults), so tests do not depend on config/game.php.
+     */
+    private function engine(array $overrides = []): GameEngine
     {
-        parent::setUp();
-
-        // Config fixe : les tests ne dépendent pas des réglages de config/jeu.php.
-        $this->engine = new GameEngine([
-            'vitesse' => ['max' => 1000, 'min' => 500],
-            'main' => ['mouillure_max' => 100, 'gain_par_intensite' => 1, 'sechage_par_tick' => 2],
-            'bouteille' => ['capacite' => 1000, 'seuil_victoire_pourcent' => 10],
-        ]);
+        return new GameEngine([...[
+            'ticks_per_second' => 20,
+            'course_length' => 6000,
+            'speed' => 3,
+            'speed_hand_wet' => 2,
+            'bottle_capacity' => 1000,
+            'rain_per_tick' => 2,
+            'max_fill_percent_for_wheel' => 9,
+            'max_ticks' => 4000,
+            'max_inputs' => 600,
+            'real_time_tolerance' => 0.9,
+        ], ...$overrides]);
     }
 
-    /**
-     * Parcours avec une pluie constante (0 = pas de pluie).
-     */
-    private function parcours(int $distance, int $intensite = 0, array $arbres = [], int $dureeMax = 10_000): array
+    private function dryCourse(array $trees = []): array
+    {
+        return ['phases' => [], 'trees' => $trees];
+    }
+
+    private function rainyCourse(array $trees = [], int $endTick = 4000): array
     {
         return [
-            'distance' => $distance,
-            'duree_max_ticks' => $dureeMax,
-            'phases' => [['debut' => 0, 'fin' => $dureeMax, 'type' => 'test', 'intensite' => $intensite]],
-            'arbres' => $arbres,
+            'phases' => [['type' => 'rain', 'start_tick' => 0, 'end_tick' => $endTick]],
+            'trees' => $trees,
         ];
     }
 
-    public function test_sans_pluie_le_personnage_court_a_vitesse_max(): void
+    public function test_dry_course_runs_at_full_speed_without_filling(): void
     {
-        $resultat = $this->engine->simuler($this->parcours(10), []);
+        $result = $this->engine(['course_length' => 30])->simulate($this->dryCourse(), []);
 
-        $this->assertSame(10, $resultat->ticks);
-        $this->assertTrue($resultat->arrive);
-        $this->assertSame(0, $resultat->remplissage);
-        $this->assertTrue($resultat->victoire);
+        $this->assertSame(10, $result->durationTicks);
+        $this->assertSame(0, $result->fillPercent);
+        $this->assertTrue($result->wheelAllowed);
     }
 
-    public function test_sans_proteger_la_bouteille_elle_se_remplit(): void
+    public function test_uncovered_bottle_fills_in_the_rain(): void
     {
-        $resultat = $this->engine->simuler($this->parcours(100, intensite: 2), []);
+        $result = $this->engine(['course_length' => 300])->simulate($this->rainyCourse(), []);
 
-        $this->assertSame(100, $resultat->ticks);
-        $this->assertSame(200, $resultat->remplissage);
-        $this->assertSame(20.0, $resultat->pourcentage());
-        $this->assertFalse($resultat->victoire);
+        $this->assertSame(100, $result->durationTicks);
+        $this->assertSame(20, $result->fillPercent); // 100 ticks x 2 = 200 / 1000
+        $this->assertFalse($result->wheelAllowed);
     }
 
-    public function test_la_main_sur_la_bouteille_empeche_le_remplissage_mais_ralentit(): void
+    public function test_covering_in_the_rain_keeps_the_bottle_empty_but_slows_down(): void
     {
-        $resultat = $this->engine->simuler(
-            $this->parcours(100, intensite: 2),
-            [['tick' => 0, 'type' => 'appui']],
+        $result = $this->engine(['course_length' => 300])->simulate(
+            $this->rainyCourse(),
+            [['tick' => 0, 'action' => 'cover']],
         );
 
-        $this->assertSame(0, $resultat->remplissage);
-        $this->assertSame(100, $resultat->mouillureFinale);
-        // 50 ticks à vitesse décroissante (37,25 m), puis 126 ticks à 0,5 m/tick.
-        $this->assertSame(176, $resultat->ticks);
-        $this->assertTrue($resultat->victoire);
+        $this->assertSame(150, $result->durationTicks); // 300 / speed_hand_wet (2)
+        $this->assertSame(0, $result->fillPercent);
+        $this->assertTrue($result->wheelAllowed);
     }
 
-    public function test_la_vitesse_baisse_avec_la_mouillure(): void
+    public function test_covering_when_dry_does_not_slow_down(): void
     {
-        $this->assertSame(1000, $this->engine->vitesse(0));
-        $this->assertSame(750, $this->engine->vitesse(50));
-        $this->assertSame(500, $this->engine->vitesse(100));
-    }
-
-    public function test_la_main_seche_dans_le_kway_et_la_bouteille_se_remplit(): void
-    {
-        $resultat = $this->engine->simuler($this->parcours(30, intensite: 2), [
-            ['tick' => 0, 'type' => 'appui'],
-            ['tick' => 10, 'type' => 'relache'],
-        ]);
-
-        // Mouillure 20 au tick 10, puis -2 par tick : sèche au bout de 10 ticks.
-        $this->assertSame(0, $resultat->mouillureFinale);
-        $this->assertSame(31, $resultat->ticks);
-        // Bouteille ouverte pendant les ticks 10 à 30 : 21 ticks x 2.
-        $this->assertSame(42, $resultat->remplissage);
-    }
-
-    public function test_la_main_ne_se_mouille_pas_sans_pluie(): void
-    {
-        $resultat = $this->engine->simuler(
-            $this->parcours(10),
-            [['tick' => 0, 'type' => 'appui']],
+        $result = $this->engine(['course_length' => 30])->simulate(
+            $this->dryCourse(),
+            [['tick' => 0, 'action' => 'cover']],
         );
 
-        $this->assertSame(0, $resultat->mouillureFinale);
-        $this->assertSame(10, $resultat->ticks);
+        $this->assertSame(10, $result->durationTicks);
     }
 
-    public function test_il_ne_pleut_pas_sous_un_arbre(): void
+    public function test_tree_shelters_from_the_rain(): void
     {
-        $resultat = $this->engine->simuler(
-            $this->parcours(10, intensite: 2, arbres: [['debut' => 0, 'fin' => 5]]),
+        $result = $this->engine(['course_length' => 30])->simulate(
+            $this->rainyCourse(trees: [['start' => 0, 'end' => 15]]),
             [],
         );
 
-        // Ticks 0 à 4 sous l'arbre (0 à 5 m), ticks 5 à 9 sous la pluie.
-        $this->assertSame(10, $resultat->remplissage);
+        // Positions 0, 3, 6, 9, 12 sheltered; 15 to 27 wet: 5 ticks x 2 = 10 → 1 %.
+        $this->assertSame(10, $result->durationTicks);
+        $this->assertSame(1, $result->fillPercent);
     }
 
-    public function test_l_intensite_suit_les_phases(): void
+    public function test_covering_under_a_tree_does_not_slow_down(): void
     {
-        $parcours = [
-            'distance' => 10,
-            'duree_max_ticks' => 100,
-            'phases' => [
-                ['debut' => 0, 'fin' => 5, 'type' => 'bruine', 'intensite' => 1],
-                ['debut' => 5, 'fin' => 100, 'type' => 'orage', 'intensite' => 4],
-            ],
-            'arbres' => [],
-        ];
-
-        $resultat = $this->engine->simuler($parcours, []);
-
-        $this->assertSame(5 * 1 + 5 * 4, $resultat->remplissage);
-    }
-
-    public function test_la_bouteille_ne_deborde_pas(): void
-    {
-        $resultat = $this->engine->simuler($this->parcours(300, intensite: 4), []);
-
-        $this->assertSame(1000, $resultat->remplissage);
-        $this->assertSame(100.0, $resultat->pourcentage());
-    }
-
-    public function test_victoire_strictement_sous_10_pourcent(): void
-    {
-        $juste = $this->engine->simuler($this->parcours(99, intensite: 1), []);
-        $pile = $this->engine->simuler($this->parcours(100, intensite: 1), []);
-
-        $this->assertSame(99, $juste->remplissage);
-        $this->assertTrue($juste->victoire);
-
-        $this->assertSame(100, $pile->remplissage);
-        $this->assertFalse($pile->victoire);
-    }
-
-    public function test_pas_de_victoire_sans_franchir_l_arrivee(): void
-    {
-        $resultat = $this->engine->simuler($this->parcours(10, dureeMax: 5), []);
-
-        $this->assertSame(5, $resultat->ticks);
-        $this->assertFalse($resultat->arrive);
-        $this->assertFalse($resultat->victoire);
-    }
-
-    public function test_les_entrees_apres_l_arrivee_sont_ignorees(): void
-    {
-        $resultat = $this->engine->simuler(
-            $this->parcours(10, intensite: 2),
-            [['tick' => 500, 'type' => 'appui']],
+        $result = $this->engine(['course_length' => 30])->simulate(
+            $this->rainyCourse(trees: [['start' => 0, 'end' => 30]]),
+            [['tick' => 0, 'action' => 'cover']],
         );
 
-        $this->assertSame(10, $resultat->ticks);
-        $this->assertSame(20, $resultat->remplissage);
+        $this->assertSame(10, $result->durationTicks);
     }
 
-    public function test_le_resultat_est_identique_a_chaque_rejeu(): void
+    public function test_it_is_dry_after_the_last_phase(): void
     {
-        $entrees = [
-            ['tick' => 3, 'type' => 'appui'],
-            ['tick' => 40, 'type' => 'relache'],
-            ['tick' => 55, 'type' => 'appui'],
+        $result = $this->engine(['course_length' => 30, 'bottle_capacity' => 100])->simulate(
+            $this->rainyCourse(endTick: 5),
+            [],
+        );
+
+        $this->assertSame(10, $result->durationTicks);
+        $this->assertSame(10, $result->fillPercent); // 5 rainy ticks x 2 = 10 / 100
+    }
+
+    public function test_dry_phases_do_not_fill(): void
+    {
+        $course = [
+            'phases' => [
+                ['type' => 'dry', 'start_tick' => 0, 'end_tick' => 5],
+                ['type' => 'rain', 'start_tick' => 5, 'end_tick' => 4000],
+            ],
+            'trees' => [],
         ];
 
-        $a = $this->engine->simuler($this->parcours(100, intensite: 3), $entrees);
-        $b = $this->engine->simuler($this->parcours(100, intensite: 3), $entrees);
+        $result = $this->engine(['course_length' => 30, 'bottle_capacity' => 100])->simulate($course, []);
 
-        $this->assertEquals($a, $b);
+        $this->assertSame(10, $result->fillPercent); // ticks 5 to 9 only
     }
 
-    public static function entreesIncoherentes(): array
+    public function test_bottle_never_overflows(): void
+    {
+        $result = $this->engine(['course_length' => 3000])->simulate($this->rainyCourse(), []);
+
+        $this->assertSame(1000, $result->durationTicks);
+        $this->assertSame(100, $result->fillPercent);
+    }
+
+    public function test_wheel_is_allowed_up_to_9_percent_only(): void
+    {
+        // 49 ticks x 2 = 98 → 9 %.
+        $nine = $this->engine(['course_length' => 147])->simulate($this->rainyCourse(), []);
+        // 50 ticks x 2 = 100 → 10 %.
+        $ten = $this->engine(['course_length' => 150])->simulate($this->rainyCourse(), []);
+
+        $this->assertSame(9, $nine->fillPercent);
+        $this->assertTrue($nine->wheelAllowed);
+        $this->assertSame(10, $ten->fillPercent);
+        $this->assertFalse($ten->wheelAllowed);
+    }
+
+    public function test_game_stops_at_max_ticks(): void
+    {
+        $result = $this->engine(['course_length' => 30, 'max_ticks' => 5])->simulate($this->dryCourse(), []);
+
+        $this->assertSame(5, $result->durationTicks);
+    }
+
+    public function test_input_is_applied_at_its_own_tick(): void
+    {
+        $result = $this->engine(['course_length' => 30, 'bottle_capacity' => 100])->simulate(
+            $this->rainyCourse(),
+            [
+                ['tick' => 2, 'action' => 'cover'],
+                ['tick' => 6, 'action' => 'uncover'],
+            ],
+        );
+
+        // Ticks 0-1 uncovered (+3, fill 4), 2-5 covered (+2, pos 14), then uncovered: 16 left → 6 ticks (fill +12).
+        $this->assertSame(12, $result->durationTicks);
+        $this->assertSame(16, $result->fillPercent);
+    }
+
+    public function test_replaying_the_same_inputs_gives_the_same_result(): void
+    {
+        $inputs = [
+            ['tick' => 3, 'action' => 'cover'],
+            ['tick' => 40, 'action' => 'uncover'],
+            ['tick' => 55, 'action' => 'cover'],
+        ];
+
+        $this->assertEquals(
+            $this->engine()->simulate($this->rainyCourse(), $inputs),
+            $this->engine()->simulate($this->rainyCourse(), $inputs),
+        );
+    }
+
+    public function test_result_uses_contract_keys(): void
+    {
+        $result = $this->engine(['course_length' => 30])->simulate($this->dryCourse(), []);
+
+        $this->assertSame(
+            ['fill_percent' => 0, 'duration_ticks' => 10, 'wheel_allowed' => true],
+            $result->toArray(),
+        );
+    }
+
+    public static function invalidInputs(): array
     {
         return [
-            'commence par un relâchement' => [[['tick' => 0, 'type' => 'relache']]],
-            'deux appuis de suite' => [[['tick' => 0, 'type' => 'appui'], ['tick' => 5, 'type' => 'appui']]],
-            'ticks non croissants' => [[['tick' => 5, 'type' => 'appui'], ['tick' => 5, 'type' => 'relache']]],
-            'tick négatif' => [[['tick' => -1, 'type' => 'appui']]],
-            'tick non entier' => [[['tick' => '3', 'type' => 'appui']]],
-            'type inconnu' => [[['tick' => 0, 'type' => 'saut']]],
-            'tick manquant' => [[['type' => 'appui']]],
+            'starts with uncover' => [[['tick' => 0, 'action' => 'uncover']]],
+            'two covers in a row' => [[['tick' => 0, 'action' => 'cover'], ['tick' => 5, 'action' => 'cover']]],
+            'ticks not strictly increasing' => [[['tick' => 5, 'action' => 'cover'], ['tick' => 5, 'action' => 'uncover']]],
+            'negative tick' => [[['tick' => -1, 'action' => 'cover']]],
+            'tick equal to max_ticks' => [[['tick' => 4000, 'action' => 'cover']]],
+            'non integer tick' => [[['tick' => '3', 'action' => 'cover']]],
+            'unknown action' => [[['tick' => 0, 'action' => 'jump']]],
+            'missing tick' => [[['action' => 'cover']]],
         ];
     }
 
-    #[DataProvider('entreesIncoherentes')]
-    public function test_les_entrees_incoherentes_sont_refusees(array $entrees): void
+    #[DataProvider('invalidInputs')]
+    public function test_invalid_inputs_are_rejected(array $inputs): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->engine->simuler($this->parcours(10), $entrees);
+        $this->engine()->simulate($this->dryCourse(), $inputs);
+    }
+
+    public function test_more_than_max_inputs_is_rejected(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->engine(['max_inputs' => 2])->simulate($this->dryCourse(), [
+            ['tick' => 0, 'action' => 'cover'],
+            ['tick' => 1, 'action' => 'uncover'],
+            ['tick' => 2, 'action' => 'cover'],
+        ]);
     }
 }
