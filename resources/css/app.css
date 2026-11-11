@@ -3,7 +3,159 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/* ============ POLICES (charte RE·SOURCE) ============ */
+
+/* ITC Cheltenham Std — titres */
+@font-face {
+    font-family: 'ITC Cheltenham Std';
+    src: url('../fonts/CheltenhamStdLight.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Cheltenham Std';
+    src: url('../fonts/CheltenhamStdLightItalic.otf') format('opentype');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Cheltenham Std';
+    src: url('../fonts/CheltenhamStdBook.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Cheltenham Std';
+    src: url('../fonts/CheltenhamStdBookItalic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Cheltenham Std';
+    src: url('../fonts/CheltenhamStdBold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Cheltenham Std';
+    src: url('../fonts/CheltenhamStdBoldItalic.otf') format('opentype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Cheltenham Std';
+    src: url('../fonts/CheltenhamStdUltra.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Cheltenham Std';
+    src: url('../fonts/CheltenhamStdUltraItalic.otf') format('opentype');
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* ITC Avant Garde Gothic Pro — texte */
+@font-face {
+    font-family: 'ITC Avant Garde Gothic Pro';
+    src: url('../fonts/ITC Avant Garde Gothic Pro-XLt.otf') format('opentype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Avant Garde Gothic Pro';
+    src: url('../fonts/ITC Avant Garde Gothic Pro-XLight Oblique.otf') format('opentype');
+    font-weight: 200;
+    font-style: oblique;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Avant Garde Gothic Pro';
+    src: url('../fonts/ITC Avant Garde Gothic Pro-Book.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Avant Garde Gothic Pro';
+    src: url('../fonts/ITC Avant Garde Gothic Pro-Book Oblique.otf') format('opentype');
+    font-weight: 400;
+    font-style: oblique;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Avant Garde Gothic Pro';
+    src: url('../fonts/ITC Avant Garde Gothic Pro-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Avant Garde Gothic Pro';
+    src: url('../fonts/ITC Avant Garde Gothic Pro-Medium Oblique.otf') format('opentype');
+    font-weight: 500;
+    font-style: oblique;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Avant Garde Gothic Pro';
+    src: url('../fonts/ITC Avant Garde Gothic Pro-Demi.otf') format('opentype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Avant Garde Gothic Pro';
+    src: url('../fonts/ITC Avant Garde Gothic Pro-Demi Oblique.otf') format('opentype');
+    font-weight: 600;
+    font-style: oblique;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Avant Garde Gothic Pro';
+    src: url('../fonts/ITC Avant Garde Gothic Pro-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'ITC Avant Garde Gothic Pro';
+    src: url('../fonts/ITC Avant Garde Gothic Pro-Bold Oblique.otf') format('opentype');
+    font-weight: 700;
+    font-style: oblique;
+    font-display: swap;
+}
+
+/* ============ THÈME : couleurs & polices de la charte ============ */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Couleurs */
+    --color-nuit: #040928;     /* principale : bleu nuit (logo) */
+    --color-zip: #fd413c;      /* secondaire / accent : rouge zip (point du logo) */
+    --color-source: #5588b8;   /* bleu source : eau, logo inversé */
+    --color-sauge: #688e62;    /* vert sauge : nature, GR70 */
+    --color-cevenol: #2e4738;  /* vert cévenol : terroir */
+
+    /* Polices */
+    --font-serif: 'ITC Cheltenham Std', Georgia, 'Times New Roman', serif;
+    --font-sans: 'ITC Avant Garde Gothic Pro', 'Century Gothic', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+    body {
+        font-family: var(--font-sans);
+        color: var(--color-nuit);
+    }
+
+    h1, h2, h3, h4 {
+        font-family: var(--font-serif);
+    }
 }
