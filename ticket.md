@@ -26,17 +26,29 @@ Version 2 : le jeu d'adresse est remplacé par un **tirage au moment de la saisi
 | M3 | Le moteur de jeu en PHP | Classe `GameEngine` qui rejoue les entrées tick par tick | — | — | 🗑️ Abandonné |
 | M4 | Les codes et QR codes | Créer la table `promo_codes`, un seeder qui génère les codes et une page de démonstration des QR codes | 3 | 🟠 Moyenne | ✅ Fait |
 | M5 | La saisie du code | Valider le code et l'utiliser une seule fois grâce à une transaction, limiter les essais avec `throttle`, créer une `GameSession` | 3 | 🔴 Haute | ✅ Fait |
-| M6 | Le tirage et le nettoyage | Créer `GameDraw` et la nouvelle `config/game.php`. Tirer `won` et `scenario` dans la transaction de M5 et les renvoyer dans `POST /api/game-sessions`. Ajouter la migration qui simplifie `game_sessions`. Supprimer `CourseGenerator`, `GameEngine`, `GameResult`, `FinishGameRequest`, les routes `course` et `finish`, et leurs tests | 3 | 🔴 Haute | ⬜ À faire |
-| M7 | La participation | Créer la table et le modèle `Participation`, la route `POST /api/game-sessions/{token}/participation` et `StoreParticipationRequest`. Refuser une partie perdue (403) et une participation en double (409) | 3 | 🔴 Haute | ⬜ À faire |
-| M8 | Le tirage final des lots | Créer la commande `php artisan lottery:draw` : tirer un gagnant par lot parmi les participations, et refuser un second tirage. C'est le code qui est à usage unique (un QR code par bouteille) : une même adresse e-mail peut jouer et participer autant de fois qu'elle a de codes gagnants, mais ne peut remporter qu'un seul lot | 3 | 🟠 Moyenne | ⬜ À faire |
-| M9 | Les e-mails | Créer les mails `ParticipationConfirmed` et `LotteryWon`, envoyés en local avec `MAIL_MAILER=log` | 2 | 🟢 Basse | ⬜ À faire |
+| M6 | Le tirage et le nettoyage | Créer `GameDraw` et la nouvelle `config/game.php`. Tirer `won` et `scenario` dans la transaction de M5 et les renvoyer dans `POST /api/game-sessions`. Ajouter la migration qui simplifie `game_sessions`. Supprimer `CourseGenerator`, `GameEngine`, `GameResult`, `FinishGameRequest`, les routes `course` et `finish`, et leurs tests | 3 | 🔴 Haute | ✅ Fait |
+| M7 | La participation | Créer la table et le modèle `Participation`, la route `POST /api/game-sessions/{token}/participation` et `StoreParticipationRequest`. Refuser une partie perdue (403) et une participation en double (409) | 3 | 🔴 Haute | ✅ Fait |
+| M8 | Le tirage final des lots | Créer la commande `php artisan lottery:draw` : tirer un gagnant par lot parmi les participations, et refuser un second tirage. C'est le code qui est à usage unique (un QR code par bouteille) : une même adresse e-mail peut jouer et participer autant de fois qu'elle a de codes gagnants, mais ne peut remporter qu'un seul lot | 3 | 🟠 Moyenne | 🔄 En cours (branche `M8`) |
+| M9 | Les e-mails | Créer les mails `ParticipationConfirmed` et `LotteryWon`, envoyés en local avec `MAIL_MAILER=log` | 2 | 🟢 Basse | 🔄 En cours (branche `M8`) |
 | M10 | L'administration des participations | Créer la page `/admin/participations` protégée par `auth.basic`, avec la liste des participations et un export CSV. Ajouter un `AdminUserSeeder` qui lit le mot de passe dans `.env` | 2 | 🟢 Basse | ⬜ À faire |
 | M11 | Le produit et la précommande | Créer les modèles `Product` et `Order`, un seeder, et un formulaire de précommande fictif avec validation, sans paiement réel | 3 | 🟢 Basse | ⬜ À faire |
 | M12 | Les tests | Vérifier le code utilisé deux fois, le tirage avec une probabilité de 0 % et de 100 %, la participation refusée si perdu ou en double, et `lottery:draw` lancé deux fois | 2 | 🟠 Moyenne | ⬜ À faire |
 | M13 | Les pages légales | Écrire les vues du règlement, des mentions légales et de la confidentialité, avec la mention « projet fictif » | 1 | 🟢 Basse | ⬜ À faire |
 | M14 | La démonstration | Préparer les données de démonstration et un README pour lancer le projet | 1 | 🟢 Basse | ⬜ À faire |
 
-**Total : 28 points, dont 20 restants.**
+**Total : 28 points, dont 14 restants (5 en cours).**
+
+### Regroupement des tickets restants
+
+Les tickets d'un même lot peuvent être faits en même temps, sur une seule branche : ils ne dépendent pas les uns des autres et touchent des fichiers différents.
+
+| Lot | Tickets | Branche | Points | Pourquoi ensemble | Dépend de |
+|-----|---------|---------|--------|-------------------|-----------|
+| 1 | M8 + M9 | `M8` | 5 | Le tirage final envoie l'e-mail `LotteryWon` : les deux se testent ensemble | M7 |
+| 2 | M10 + M11 + M13 | `M10-M11-M13` | 6 | Trois parties indépendantes du site (administration, produit et précommande, pages légales) : chacune a ses propres routes web, contrôleurs et vues | M7 (M10 lit les participations) |
+| 3 | M12 + M14 | `M12-M14` | 3 | La finalisation : compléter les tests, puis les données de démonstration et le README, qui décrivent le projet terminé | Lots 1 et 2 |
+
+M12 est déjà en grande partie couvert : le code utilisé deux fois, la probabilité de 0 % et de 100 %, la participation refusée si perdue ou en double et `lottery:draw` lancé deux fois sont testés depuis M5 à M8. Il restera à relire la couverture et à ajouter les tests de M10, M11 et M13.
 
 ## Clément : front-end et GSAP
 

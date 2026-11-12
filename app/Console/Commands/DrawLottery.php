@@ -2,12 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\LotteryWon;
 use App\Models\Participation;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Final prize draw (regle.md, section 5 "Le tirage final des lots").
@@ -35,7 +37,7 @@ class DrawLottery extends Command
             $candidates = Participation::orderBy('id')->lockForUpdate()->get(['id', 'first_name', 'email']);
             $winners = [];
 
-            foreach ($prizes as $rank => $label) {
+            foreach (array_keys($prizes) as $rank) {
                 if ($candidates->isEmpty()) {
                     break;
                 }
@@ -73,9 +75,12 @@ class DrawLottery extends Command
             $this->warn("Pas assez de participants : {$unawarded} lot(s) non attribué(s).");
         }
 
-        $this->info('Tirage terminé : '.count($winners).' gagnant(s).');
+        // Sent after the commit: only saved winners are notified (regle.md, section 5).
+        foreach ($winners as $winner) {
+            Mail::to($winner->email)->send(new LotteryWon($winner));
+        }
 
-        // TODO M9: send the LotteryWon e-mail to each winner (regle.md, section 5).
+        $this->info('Tirage terminé : '.count($winners).' gagnant(s), prévenu(s) par e-mail.');
 
         return self::SUCCESS;
     }

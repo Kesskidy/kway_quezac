@@ -17,7 +17,7 @@ class DrawLotteryTest extends TestCase
         Participation::factory()->count(10)->create();
 
         $this->artisan('lottery:draw')
-            ->expectsOutputToContain('Tirage terminé : 3 gagnant(s).')
+            ->expectsOutputToContain('Tirage terminé : 3 gagnant(s)')
             ->assertSuccessful();
 
         $winners = Participation::whereNotNull('prize_rank')->orderBy('prize_rank')->get();
@@ -33,7 +33,7 @@ class DrawLotteryTest extends TestCase
         Participation::factory()->create(['email' => 'alex@example.com']);
         Participation::factory()->create(['email' => 'sam@example.com']);
 
-        foreach (range(1, 10) as $run) {
+        for ($run = 0; $run < 10; $run++) {
             Participation::query()->update(['prize_rank' => null, 'drawn_at' => null]);
 
             $this->artisan('lottery:draw')->assertSuccessful();
