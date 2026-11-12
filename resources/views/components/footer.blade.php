@@ -20,8 +20,8 @@
                     <ul class="mt-3.5 flex flex-col text-[15px]">
                         <li><a href="#histoire" class="inline-flex min-h-11 items-center hover:text-source">L’histoire</a></li>
                         <li><a href="#recyclage" class="inline-flex min-h-11 items-center hover:text-source">Le recyclage</a></li>
-                        <li><a href="#valeurs" class="inline-flex min-h-11 items-center hover:text-source">Les valeurs</a></li>
                         <li><a href="#collection" class="inline-flex min-h-11 items-center hover:text-source">La collection</a></li>
+                        <li><a href="#valeurs" class="inline-flex min-h-11 items-center hover:text-source">Les valeurs</a></li>
                         <li><a href="#jeu" class="inline-flex min-h-11 items-center hover:text-source">Le jeu</a></li>
                     </ul>
                 </div>
