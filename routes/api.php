@@ -12,3 +12,7 @@ Route::post('/game-sessions', [GameSessionController::class, 'store'])
 Route::get('/game-sessions/{gameSession:token}/course', [GameSessionController::class, 'course'])
     ->middleware('throttle:30,1')
     ->name('game-sessions.course');
+
+Route::post('/game-sessions/{gameSession:token}/finish', [GameSessionController::class, 'finish'])
+    ->middleware('throttle:10,1')
+    ->name('game-sessions.finish');
