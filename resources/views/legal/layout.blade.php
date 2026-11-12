@@ -13,7 +13,6 @@
 
         @yield('content')
 
-        {{-- Must stay a <nav> directly in <article>: rules-modal.js removes it when showing the rules in a modal. --}}
         <nav class="mt-16 flex flex-wrap gap-6 text-sm">
             <a href="{{ route('landing') }}">Retour au site</a>
             <a href="{{ route('legal.rules') }}">Règlement du jeu</a>

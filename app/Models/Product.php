@@ -11,7 +11,6 @@ class Product extends Model
 
     protected $fillable = ['name', 'slug', 'description', 'price_cents', 'image_path'];
 
-    // Prices are stored in cents: 30000 → "300 €", 3990 → "39,90 €".
     public function formattedPrice(): string
     {
         return number_format($this->price_cents / 100, $this->price_cents % 100 ? 2 : 0, ',', ' ').' €';
