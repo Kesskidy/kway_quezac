@@ -12,6 +12,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // Partagé entre la scène accrochée et la section Terre : hauteur des flaques par rapport au bas de la scène
     const shared = { navigating: false, finishSeq: null, replaySeq: null, poolOffset: null, handoff: false, renderTerre: null, stageST: null, detachAt: null, terreST: null, sourceST: null, sourcePinST: null };
 
+    // ============ MENU MOBILE (burger) ============
+    const header = document.querySelector('[data-site-header]');
+    const menuToggle = header?.querySelector('[data-menu-toggle]');
+    const menu = header?.querySelector('[data-menu]');
+    if (menuToggle && menu) {
+        const setMenu = (open) => {
+            menuToggle.setAttribute('aria-expanded', String(open));
+            menuToggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+            header.toggleAttribute('data-open', open);
+            menu.toggleAttribute('data-open', open);
+            menu.inert = !open;
+            document.documentElement.style.overflow = open ? 'hidden' : ''; // la page ne défile pas derrière le menu
+            if (open) menu.querySelector('a')?.focus();
+        };
+        menuToggle.addEventListener('click', () => setMenu(menuToggle.getAttribute('aria-expanded') !== 'true'));
+        // un lien choisi : le menu se ferme, puis on part vers la section
+        menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menuToggle.getAttribute('aria-expanded') === 'true') {
+                setMenu(false);
+                menuToggle.focus();
+            }
+        });
+        // repassage en desktop menu ouvert : on le referme
+        window.matchMedia('(min-width: 48rem)').addEventListener('change', (e) => e.matches && setMenu(false));
+    }
+
     // ============ RETOUR EN HAUT ============
     const toTop = document.querySelector('[data-to-top]');
     if (toTop) {
@@ -68,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     main.src = thumb.dataset.src;
                     main.alt = thumb.dataset.alt;
+                    main.dataset.fit = thumb.dataset.fit || 'cover'; // détouré (contain) ou photo plein cadre (cover)
                     main.style.opacity = '1';
                 }, 200);
             });
@@ -575,6 +603,61 @@ document.addEventListener('DOMContentLoaded', () => {
             .to(bottle, { filter: GLOW, duration: 0.05 }, LOCK + 0.35);
         shared.sourceST = sourceTl.scrollTrigger;
 
+        // Au décrochage de la Source, la bouteille descend (en passant derrière le titre et le texte du Recyclage)
+        // et vient se poser à la place de la bouteille de l'étape « 1 · Collecte », qui est masquée
+        // (Source en z-10 au-dessus du fond blanc du Recyclage, titre et texte en z-30 devant la bouteille)
+        const recycleSec = document.querySelector('#recyclage');
+        const collectBottle = recycleSec?.querySelector('[data-collect-bottle]');
+        if (collectBottle) {
+            // Position dans un ancêtre, sans tenir compte des transforms (ni de la bouteille, ni du pin)
+            const offsetIn = (el, anc) => {
+                let x = 0;
+                let y = 0;
+                while (el && el !== anc) {
+                    x += el.offsetLeft;
+                    y += el.offsetTop;
+                    el = el.offsetParent;
+                }
+                return { x, y };
+            };
+            const glide = { x: 0, y: 0, scale: 1 };
+            // Au décrochage, la Source est en haut de l'écran et le Recyclage commence juste sous elle :
+            // l'écart bouteille → bouteille de la Collecte est alors fixe (les deux défilent ensemble)
+            const layoutGlide = () => {
+                const b = offsetIn(bottle, source);
+                const c = offsetIn(collectBottle, recycleSec);
+                // horizontalement, getBoundingClientRect tient compte du translate -50 % (lg) et n'est affecté ni par le scroll ni par le pin
+                const cr = collectBottle.getBoundingClientRect();
+                const cx = cr.left + cr.width / 2 - recycleSec.getBoundingClientRect().left;
+                glide.scale = collectBottle.offsetHeight / bottle.offsetHeight; // même taille que la bouteille de la Collecte
+                glide.x = cx - (b.x + bottle.offsetWidth / 2);
+                glide.y = source.offsetHeight + c.y + collectBottle.offsetHeight / 2 - (b.y + bottle.offsetHeight / 2);
+                return glide;
+            };
+
+            gsap.set(collectBottle, { autoAlpha: 0 }); // remplacée par la bouteille qui arrive (rétablie sans animations)
+
+            gsap.timeline({
+                defaults: { ease: 'none' },
+                scrollTrigger: {
+                    trigger: collectBottle,
+                    start: () => shared.sourcePinST.end, // la Source se décroche
+                    end: 'center 60%', // l'étape Collecte est bien visible : la bouteille est posée sur le fil
+                    scrub: 0.5,
+                    invalidateOnRefresh: true,
+                },
+            })
+                .fromTo(
+                    bottle,
+                    { x: 0, y: 0, scale: 1 },
+                    { x: () => layoutGlide().x, y: () => layoutGlide().y, scale: () => layoutGlide().scale, ease: 'power1.inOut', duration: 1, immediateRender: false },
+                    0,
+                )
+                // elle bascule en glissant, puis se redresse pour se poser droite
+                .fromTo(bottle, { rotation: 0 }, { rotation: 20, ease: 'sine.out', duration: 0.5, immediateRender: false }, 0)
+                .to(bottle, { rotation: 0, ease: 'sine.inOut', duration: 0.5 }, 0.5);
+        }
+
         return () => {
             shared.handoff = false;
             gsap.set(bottle, { clearProps: 'filter' });
@@ -642,26 +725,45 @@ document.addEventListener('DOMContentLoaded', () => {
         bar.toggleAttribute('data-light', r.top < mid && r.bottom > mid);
     };
 
-    // Étapes cliquables : défilement doux jusqu'au début de l'étape
-    stepEls.forEach((step, i) => {
-        step.querySelector('[data-progress-go]')?.addEventListener('click', () => {
-            // 05 — Recyclage : on arrive sur le titre « De la bouteille au fil. » (après le pin de la Source)
-            const target = i === stepEls.length - 1 ? Math.round(Math.max(marks[i], pageTop(recycle))) : Math.round(marks[i]) + (i ? 2 : 0);
-            shared.navigating = true;
-            if (i >= 2) shared.finishSeq?.(); // on va au-delà de la chute : séquence terminée d'office
-            let finished = false;
-            const done = () => {
-                if (finished) return;
-                finished = true;
-                shared.navigating = false;
-                window.removeEventListener('scrollend', done);
-                if (i === 1) shared.replaySeq?.(); // « 02 — La pluie » depuis plus bas : la goutte retombe du nuage
-            };
-            window.addEventListener('scrollend', done);
-            setTimeout(done, 2500); // navigateurs sans « scrollend »
-            window.scrollTo({ top: target, behavior: 'smooth' });
+    // Défilement doux jusqu'au début d'une étape
+    let scrollTween;
+    const goToStep = (i) => {
+        // 05 — Recyclage : on arrive sur le titre « De la bouteille au fil. » (après le pin de la Source)
+        const target = i === stepEls.length - 1 ? Math.round(Math.max(marks[i], pageTop(recycle))) : Math.round(marks[i]) + (i ? 2 : 0);
+        scrollTween?.kill(); // un trajet précédent s'arrête (avant de repasser en navigation)
+        shared.navigating = true;
+        if (i >= 2) shared.finishSeq?.(); // on va au-delà de la chute : séquence terminée d'office
+        const stop = () => scrollTween?.kill();
+        const done = () => {
+            shared.navigating = false;
+            ['wheel', 'touchstart', 'keydown'].forEach((ev) => window.removeEventListener(ev, stop));
+            if (i === 1) shared.replaySeq?.(); // « 02 — La pluie » depuis plus bas : la goutte retombe du nuage
+        };
+        // Défilement piloté par GSAP (le « smooth » natif est trop rapide et sa vitesse n'est pas réglable) :
+        // durée selon la distance, entre 1,2 s et 3 s ; l'utilisateur reprend la main s'il scrolle pendant le trajet
+        const pos = { y: window.scrollY };
+        const duration = gsap.utils.clamp(1.2, 3, Math.abs(target - pos.y) / 1200);
+        scrollTween = gsap.to(pos, {
+            y: target,
+            duration,
+            ease: 'power2.inOut',
+            onUpdate: () => window.scrollTo(0, pos.y),
+            onComplete: done,
+            onInterrupt: done,
         });
-    });
+        ['wheel', 'touchstart', 'keydown'].forEach((ev) => window.addEventListener(ev, stop, { once: true, passive: true }));
+    };
+
+    // Étapes cliquables
+    stepEls.forEach((step, i) => step.querySelector('[data-progress-go]')?.addEventListener('click', () => goToStep(i)));
+
+    // Liens « #recyclage » (bouton « Suivre la bouteille », menu, pied de page…) : même défilement doux que l'étape 05
+    document.querySelectorAll('a[href="#recyclage"]').forEach((link) =>
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            goToStep(stepEls.length - 1);
+        }),
+    );
 
     ScrollTrigger.create({
         start: 0,
