@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FinishGameRequest;
 use App\Http\Requests\StartGameRequest;
 use App\Http\Resources\GameSessionResource;
 use App\Models\GameSession;
 use App\Models\PromoCode;
 use App\Services\Game\CourseGenerator;
+use App\Services\Game\GameEngine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -74,6 +76,46 @@ class GameSessionController extends Controller
                 'rules' => Arr::only(config('game'), self::PUBLIC_RULES),
             ],
         ]);
+    }
+
+    /**
+     * POST /api/game-sessions/{token}/finish — replays the inputs on the server and saves the result
+     * (regle.md, sections 4.3 and 6). The front only sends inputs, never a score.
+     */
+    public function finish(FinishGameRequest $request, GameSession $gameSession, GameEngine $engine): JsonResponse
+    {
+        return DB::transaction(function () use ($request, $gameSession, $engine) {
+            // Lock the row so two simultaneous `finish` calls cannot both save a result.
+            $gameSession = GameSession::whereKey($gameSession->getKey())->lockForUpdate()->firstOrFail();
+
+            if ($gameSession->isFinished()) {
+                return $this->error('game_session', 'Cette partie est déjà terminée.', 409);
+            }
+
+            if ($gameSession->started_at === null) {
+                return $this->error('inputs', 'Cette partie n’a pas encore commencé.', 422);
+            }
+
+            $inputs = $request->inputs();
+            $result = $engine->simulate($gameSession->course, $inputs);
+
+            $elapsedSeconds = $gameSession->started_at->diffInMilliseconds(now()) / 1000;
+            $minimumSeconds = $result->durationTicks / config('game.ticks_per_second') * config('game.real_time_tolerance');
+
+            if ($elapsedSeconds < $minimumSeconds) {
+                return $this->error('inputs', 'Partie terminée trop vite.', 422);
+            }
+
+            $gameSession->update([
+                'finished_at' => now(),
+                'inputs' => $inputs,
+                'fill_percent' => $result->fillPercent,
+                'duration_ticks' => $result->durationTicks,
+                'wheel_allowed' => $result->wheelAllowed,
+            ]);
+
+            return response()->json(['data' => $result->toArray()]);
+        });
     }
 
     /**
