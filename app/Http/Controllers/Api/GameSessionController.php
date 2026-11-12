@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StartGameRequest;
+use App\Http\Requests\StoreParticipationRequest;
 use App\Http\Resources\GameSessionResource;
+use App\Models\GameSession;
 use App\Models\PromoCode;
 use App\Services\Game\GameDraw;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +42,42 @@ class GameSessionController extends Controller
         });
 
         return (new GameSessionResource($gameSession))->response()->setStatusCode(201);
+    }
+
+    /**
+     * POST /api/game-sessions/{token}/participation — registers the winner for the final
+     * prize draw (regle.md, section 4.2). A lost game is refused by the request (403).
+     */
+    public function participation(StoreParticipationRequest $request, GameSession $gameSession): JsonResponse
+    {
+        try {
+            DB::transaction(function () use ($request, $gameSession) {
+                // Lock the game so two simultaneous calls cannot both register a participation.
+                $gameSession = GameSession::whereKey($gameSession->getKey())->lockForUpdate()->firstOrFail();
+
+                if ($gameSession->participation()->exists()) {
+                    throw new HttpResponseException($this->participationAlreadyRegistered());
+                }
+
+                $gameSession->participation()->create([
+                    'first_name' => $request->validated('first_name'),
+                    'email' => $request->validated('email'),
+                    'consented_at' => now(),
+                ]);
+            });
+        } catch (UniqueConstraintViolationException) {
+            // Safety net: game_session_id is unique in the database.
+            return $this->participationAlreadyRegistered();
+        }
+
+        return response()->json([
+            'data' => ['message' => "C'est noté ! Ta participation au tirage des lots est enregistrée."],
+        ], 201);
+    }
+
+    private function participationAlreadyRegistered(): JsonResponse
+    {
+        return $this->error('game_session', 'Ta participation est déjà enregistrée.', 409);
     }
 
     /**
