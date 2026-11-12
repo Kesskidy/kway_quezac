@@ -10,8 +10,6 @@ use App\Mail\ParticipationConfirmed;
 use App\Models\GameSession;
 use App\Models\PromoCode;
 use App\Services\Game\GameDraw;
-use Illuminate\Database\UniqueConstraintViolationException;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -19,23 +17,19 @@ use Illuminate\Validation\ValidationException;
 
 class GameSessionController extends Controller
 {
-    /**
-     * POST /api/game-sessions — consumes the code and draws the result in the same
-     * transaction: 1 code = 1 game = 1 draw (regle.md, sections 4.1 and 5).
-     */
-    public function store(StartGameRequest $request, GameDraw $gameDraw): JsonResponse
+    public function store(StartGameRequest $request, GameDraw $gameDraw): GameSessionResource
     {
         $gameSession = DB::transaction(function () use ($request, $gameDraw) {
-            $promoCode = PromoCode::where('code', $request->validated('code'))
-                ->lockForUpdate()
-                ->first();
+            // The lock makes two simultaneous requests with the same code wait for each other,
+            // so a code can never be played twice (1 code = 1 draw).
+            $promoCode = PromoCode::where('code', $request->validated('code'))->lockForUpdate()->first();
 
-            if ($promoCode === null) {
+            if (! $promoCode) {
                 throw ValidationException::withMessages(['code' => 'Ce code est invalide.']);
             }
 
-            if ($promoCode->isUsed()) {
-                throw new HttpResponseException($this->error('code', 'Ce code a déjà été utilisé.', 409));
+            if ($promoCode->used_at) {
+                throw ValidationException::withMessages(['code' => 'Ce code a déjà été utilisé.'])->status(409);
             }
 
             $promoCode->update(['used_at' => now()]);
@@ -43,56 +37,24 @@ class GameSessionController extends Controller
             return $promoCode->gameSession()->create($gameDraw->draw());
         });
 
-        return (new GameSessionResource($gameSession))->response()->setStatusCode(201);
+        return new GameSessionResource($gameSession);
     }
 
-    /**
-     * POST /api/game-sessions/{token}/participation — registers the winner for the final
-     * prize draw (regle.md, section 4.2). A lost game is refused by the request (403).
-     */
     public function participation(StoreParticipationRequest $request, GameSession $gameSession): JsonResponse
     {
-        try {
-            $participation = DB::transaction(function () use ($request, $gameSession) {
-                // Lock the game so two simultaneous calls cannot both register a participation.
-                $gameSession = GameSession::whereKey($gameSession->getKey())->lockForUpdate()->firstOrFail();
-
-                if ($gameSession->participation()->exists()) {
-                    throw new HttpResponseException($this->participationAlreadyRegistered());
-                }
-
-                return $gameSession->participation()->create([
-                    'first_name' => $request->validated('first_name'),
-                    'email' => $request->validated('email'),
-                    'consented_at' => now(),
-                ]);
-            });
-        } catch (UniqueConstraintViolationException) {
-            // Safety net: game_session_id is unique in the database.
-            return $this->participationAlreadyRegistered();
+        if ($gameSession->participation()->exists()) {
+            throw ValidationException::withMessages(['game_session' => 'Ta participation est déjà enregistrée.'])->status(409);
         }
 
-        // Sent after the commit, so a participation is never confirmed if it was not saved.
+        $participation = $gameSession->participation()->create([
+            ...$request->safe()->only(['first_name', 'email']),
+            'consented_at' => now(),
+        ]);
+
         Mail::to($participation->email)->send(new ParticipationConfirmed($participation));
 
         return response()->json([
             'data' => ['message' => "C'est noté ! Ta participation au tirage des lots est enregistrée."],
         ], 201);
-    }
-
-    private function participationAlreadyRegistered(): JsonResponse
-    {
-        return $this->error('game_session', 'Ta participation est déjà enregistrée.', 409);
-    }
-
-    /**
-     * Error in the standard Laravel format (regle.md, section 4.3).
-     */
-    private function error(string $field, string $message, int $status): JsonResponse
-    {
-        return response()->json([
-            'message' => $message,
-            'errors' => [$field => [$message]],
-        ], $status);
     }
 }

@@ -114,19 +114,4 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
-    /*
-    |--------------------------------------------------------------------------
-    | Administrator account (regle.md, section 3)
-    |--------------------------------------------------------------------------
-    |
-    | Created by AdminUserSeeder. Read from .env (never committed), with no
-    | default value: the seeder refuses to run without them.
-    |
-    */
-
-    'admin' => [
-        'email' => env('ADMIN_EMAIL'),
-        'password' => env('ADMIN_PASSWORD'),
-    ],
-
 ];

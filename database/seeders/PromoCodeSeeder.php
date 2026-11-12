@@ -4,52 +4,18 @@ namespace Database\Seeders;
 
 use App\Models\PromoCode;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
-/**
- * Demo codes only (regle.md, section 10). Real codes and their QR codes are generated outside the site.
- * Codes are random at each run: no real code is ever stored in the repository.
- * No factory here: factories need Faker, which is only installed in development.
- */
 class PromoCodeSeeder extends Seeder
 {
-    public const COUNT = 20;
-
-    /**
-     * No 0/O or 1/I/L, so a code read on a bottle cannot be mistyped.
-     */
-    private const ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-
     public function run(): void
     {
-        $existing = PromoCode::pluck('code')->flip();
-        $codes = [];
+        $this->command?->info('Codes de démonstration :');
 
-        while (count($codes) < self::COUNT) {
-            $code = 'QZK-'.$this->randomPart().'-'.$this->randomPart();
-
-            if (! isset($existing[$code])) {
-                $codes[$code] = true;
-            }
+        for ($i = 0; $i < 20; $i++) {
+            $code = 'QZK-'.Str::upper(Str::random(4)).'-'.Str::upper(Str::random(4));
+            PromoCode::create(['code' => $code]);
+            $this->command?->line($code);
         }
-
-        $now = now();
-        PromoCode::insert(array_map(
-            fn (string $code) => ['code' => $code, 'created_at' => $now, 'updated_at' => $now],
-            array_keys($codes),
-        ));
-
-        $this->command?->info(self::COUNT.' codes de démonstration créés, à saisir dans la section du jeu :');
-        $this->command?->table(['Code'], array_map(fn (string $code) => [$code], array_keys($codes)));
-    }
-
-    private function randomPart(): string
-    {
-        $part = '';
-
-        for ($i = 0; $i < 4; $i++) {
-            $part .= self::ALPHABET[random_int(0, strlen(self::ALPHABET) - 1)];
-        }
-
-        return $part;
     }
 }

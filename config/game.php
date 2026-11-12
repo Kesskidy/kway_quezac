@@ -1,14 +1,5 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Game configuration — see regle.md, section 5
-|--------------------------------------------------------------------------
-|
-| Never sent to the front: the API only returns `won` and `scenario`.
-|
-*/
-
 return [
     // Chance de gagner une participation, en pourcentage (0 à 100).
     'win_probability' => 30,

@@ -2,28 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
-/**
- * @extends Factory<Product>
- */
 class ProductFactory extends Factory
 {
-    /**
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-        $name = 'Veste '.fake()->unique()->word();
-
         return [
-            'name' => $name,
-            'slug' => Str::slug($name),
-            'description' => fake()->sentence(),
+            'name' => 'Veste RE·SOURCE',
+            'slug' => fake()->unique()->slug(),
+            'description' => 'Veste de pluie.',
             'price_cents' => 30000,
-            'image_path' => null,
         ];
     }
 }
