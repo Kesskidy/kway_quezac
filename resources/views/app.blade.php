@@ -102,8 +102,8 @@
     <section id="foret" data-scene-runner aria-labelledby="titre-foret" class="relative min-h-svh overflow-hidden bg-cevenol py-28 motion-safe:absolute motion-safe:inset-0">
         {{-- Coureur centré. Point d'impact de la goutte : data-impact-x / data-impact-y (fractions de l'image) = haut de l'épaule --}}
         {{-- « Caméra » : descend ensuite vers le sol (data-shoe-y = bas de la semelle d'appui = niveau du sol) --}}
-        {{-- Fond forêt (test) derrière le coureur, avec une vignette sur les bords --}}
-        <div data-runner-bg class="pointer-events-none absolute inset-0" aria-hidden="true">
+        {{-- Fond forêt derrière le coureur, avec une vignette sur les bords. Desktop seulement : sur mobile, fond uni pour la lisibilité --}}
+        <div data-runner-bg class="pointer-events-none absolute inset-0 max-lg:hidden" aria-hidden="true">
             <img src="{{ asset('images/foret-fond.jpg') }}" alt="" width="798" height="532" class="size-full object-cover">
             {{-- vignette : apparaît en même temps que le titre et l'encart (JS), visible d'office sans animation --}}
             <div data-runner-vignette class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(4_9_40/0.15)_15%,rgb(4_9_40/0.3)_30%,rgb(4_9_40/0.58)_45%,rgb(4_9_40/0.86)_62%,rgb(4_9_40/0.97)_80%,rgb(4_9_40/1)_100%)]"></div>
@@ -512,31 +512,31 @@
             <div data-reveal>
                 <p class="flex items-center gap-3 text-xs font-semibold tracking-[.16em] text-white/85 uppercase">
                     <img src="{{ asset('images/icone-gr70.png') }}" alt="" width="123" height="141" loading="lazy" class="h-7 w-auto" aria-hidden="true">
-                    L’Expédition RE·SOURCE · GR70
+                    L’Expédition RE·SOURCE · 16 – 17 octobre 2027
                 </p>
                 <h2 id="titre-expedition" class="mt-5 text-[clamp(40px,5vw,68px)] leading-[0.98] font-bold tracking-[-0.03em]">Viens la tester<br>sous l’averse.</h2>
-                <p class="mt-6 max-w-130 text-xl leading-normal text-white/85">Une randonnée sur le chemin de Stevenson, en pleine saison des pluies. Pas de vitrine ni de cabine d’essayage : la veste RE·SOURCE face au vrai temps cévenol, celui pour lequel elle a été pensée.</p>
+                <p class="mt-6 max-w-130 text-xl leading-normal text-white/85">Une randonnée collective sur le GR70, les 16 et 17 octobre 2027, pour remonter ensemble jusqu’à la source de Quézac. En pleine saison des pluies : la veste RE·SOURCE face au vrai temps cévenol, celui pour lequel elle a été pensée.</p>
 
                 <ul class="mt-10 flex max-w-130 flex-col gap-4">
                     <li data-reveal class="flex gap-4 rounded-2xl border border-white/15 bg-nuit/25 p-5">
                         <span class="mt-1.5 size-3 flex-none rounded-full bg-zip" aria-hidden="true"></span>
                         <div>
                             <h3 class="font-sans text-[17px] font-semibold">Pop-up K-Way sur le parcours</h3>
-                            <p class="mt-1 text-[15px] leading-normal text-white/80">La collection t’attend au bord du sentier : tu l’essaies là où elle sert, et tu peux repartir avec.</p>
+                            <p class="mt-1 text-[15px] leading-normal text-white/80">Découvre la collection en avant-première au bord du sentier : essaie la veste là où elle sert. Elle y est en vente, si tu veux repartir avec.</p>
                         </div>
                     </li>
                     <li data-reveal class="flex gap-4 rounded-2xl border border-white/15 bg-nuit/25 p-5">
                         <span class="mt-1.5 size-3 flex-none rounded-full bg-source" aria-hidden="true"></span>
                         <div>
-                            <h3 class="font-sans text-[17px] font-semibold">Une station Quézac à chaque étape</h3>
-                            <p class="mt-1 text-[15px] leading-normal text-white/80">Un ravitaillement en eau de la source à chaque fin d’étape, pour repartir le lendemain.</p>
+                            <h3 class="font-sans text-[17px] font-semibold">Un ravitaillement Quézac offert</h3>
+                            <p class="mt-1 text-[15px] leading-normal text-white/80">À chaque étape, une station Quézac t’attend avec de l’eau de la source, gratuitement.</p>
                         </div>
                     </li>
                     <li data-reveal class="flex gap-4 rounded-2xl border border-white/15 bg-nuit/25 p-5">
                         <span class="mt-1.5 size-3 flex-none rounded-full bg-white" aria-hidden="true"></span>
                         <div>
                             <h3 class="font-sans text-[17px] font-semibold">La collab, en vrai</h3>
-                            <p class="mt-1 text-[15px] leading-normal text-white/80">K-Way × Quézac, ailleurs que sur un écran : sur le terrain, dans la boue et sous la pluie, ensemble.</p>
+                            <p class="mt-1 text-[15px] leading-normal text-white/80">K-Way × Quézac, ailleurs que sur un écran : une marche collective, sous la pluie, jusqu’à l’endroit où l’eau jaillit.</p>
                         </div>
                     </li>
                 </ul>
@@ -544,7 +544,7 @@
 
             <div data-reveal class="rounded-[28px] bg-nuit p-6 text-white shadow-[0_30px_60px_rgb(4_9_40/0.35)] sm:p-9 lg:mt-14">
                 <h3 class="font-serif text-[28px] leading-tight font-bold">Rejoins l’expédition</h3>
-                <p class="mt-3 leading-normal text-white/80">Laisse ton prénom et ton e-mail : les dates et le programme des étapes te seront envoyés.</p>
+                <p class="mt-3 leading-normal text-white/80">Rendez-vous les 16 et 17 octobre 2027. Laisse ton prénom et ton e-mail : le programme des étapes et le point de départ te seront envoyés.</p>
 
                 <form id="expedition-form" method="POST" action="{{ route('expedition.store') }}" class="mt-6.5 flex flex-col gap-4.5" novalidate>
                     @csrf
@@ -573,7 +573,7 @@
         </div>
     </section>
 
-    {{-- ============ LE JEU (regle.md §0, §4, §7, §9) ============
+    {{-- ============ LE JEU ============
          1. code de la bouteille → POST /api/game-sessions (le serveur tire le résultat)
          2. animation de 10 s (#game-stage, data-outcome / data-scenario posés par le JS), bouton « Passer »
          3. fin gagnante → formulaire de participation (POST /api/game-sessions/{token}/participation) ; fin perdante → « Presque ! » --}}
@@ -586,7 +586,7 @@
                 <h2 id="titre-jeu" class="mt-5.5 text-[clamp(44px,6vw,86px)] leading-[0.94] font-bold tracking-[-0.035em]">Remonte à<br>la source.</h2>
                 <p class="mt-6 max-w-130 text-xl leading-normal">Chaque bouteille Quézac cache un code. Saisis-le et suis le randonneur sous la pluie : à l’arrivée, tu sauras tout de suite si tu as gagné ta participation au tirage des lots.</p>
                 <ol class="mt-8 flex max-w-130 flex-col gap-3.5 text-[17px] font-semibold">
-                    <li class="flex items-center gap-4"><span class="flex size-11 flex-none items-center justify-center rounded-full bg-nuit font-serif text-lg font-bold text-white" aria-hidden="true">1</span>Trouve le code sur ta bouteille</li>
+                    <li class="flex items-center gap-4"><span class="flex size-11 flex-none items-center justify-center rounded-full bg-nuit font-serif text-lg font-bold text-white" aria-hidden="true">1</span>Scanne le QR code sous le bouchon</li>
                     <li class="flex items-center gap-4"><span class="flex size-11 flex-none items-center justify-center rounded-full bg-nuit font-serif text-lg font-bold text-white" aria-hidden="true">2</span>Saisis-le : 1 code = 1 tirage</li>
                     <li class="flex items-center gap-4"><span class="flex size-11 flex-none items-center justify-center rounded-full bg-nuit font-serif text-lg font-bold text-white" aria-hidden="true">3</span>Gagné ? Laisse ton prénom et ton e-mail</li>
                 </ol>

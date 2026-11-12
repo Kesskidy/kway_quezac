@@ -21,8 +21,8 @@ class ExpeditionRegistrationController extends Controller
         );
 
         $message = $registration->wasRecentlyCreated
-            ? "Bienvenue dans l’expédition, {$registration->first_name} ! Le programme des étapes t’arrivera sur {$registration->email}."
-            : 'Cette adresse est déjà inscrite à l’expédition : on se retrouve sur le GR70.';
+            ? "Bienvenue dans l’expédition, {$registration->first_name} ! Le programme des étapes des 16 et 17 octobre t’arrivera sur {$registration->email}."
+            : 'Cette adresse est déjà inscrite à l’expédition : on se retrouve les 16 et 17 octobre sur le GR70.';
 
         if ($request->expectsJson()) {
             return response()->json(['data' => ['message' => $message]], $registration->wasRecentlyCreated ? 201 : 200);

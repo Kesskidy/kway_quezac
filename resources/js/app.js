@@ -722,23 +722,44 @@ document.addEventListener('DOMContentLoaded', () => {
     // position est mesurée pour dessiner les tracés (un décalage fausserait le calcul).
     // Le Ciel et la Pluie ont déjà leur propre apparition dans la scène accrochée. Créé après les scènes :
     // les positions tiennent compte de la section Source accrochée (pin).
+    // Rien n'est masqué au chargement : après une actualisation, la section affichée est visible tout de suite
+    // (sinon elle resterait vide le temps que les images chargent et que GSAP recalcule les positions).
+    // Au premier geste de l'utilisateur, la position de la page est connue : seuls les blocs encore sous l'écran
+    // sont masqués, puis apparaissent au scroll.
     mm.add('(prefers-reduced-motion: no-preference)', () => {
         const blocks = gsap.utils.toArray('[data-reveal]');
         if (!blocks.length) return;
 
+        const INPUTS = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
+        let triggers = [];
+        let pending = [];
+
         const reveal = (batch) =>
             gsap.to(batch, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power2.out', stagger: 0.12, overwrite: true });
 
-        gsap.set(blocks, { autoAlpha: 0, y: (i, el) => (el.dataset.reveal === 'fade' ? 0 : 40) });
-        ScrollTrigger.batch(blocks, {
-            start: 'clamp(top 85%)', // clamp : un bloc en bas de page (pied de page) apparaît quand même en fin de scroll
-            once: true,
-            onEnter: reveal,
-            onLeave: reveal, // page rechargée plus bas, ou saut direct par un lien : les blocs déjà dépassés restent visibles
-        });
+        const arm = () => {
+            INPUTS.forEach((type) => window.removeEventListener(type, arm, true));
+            const line = window.innerHeight * 0.85;
+            pending = blocks.filter((el) => el.getBoundingClientRect().top > line);
+            if (!pending.length) return;
+
+            gsap.set(pending, { autoAlpha: 0, y: (i, el) => (el.dataset.reveal === 'fade' ? 0 : 40) });
+            triggers = ScrollTrigger.batch(pending, {
+                start: 'clamp(top 85%)', // clamp : un bloc en bas de page (pied de page) apparaît quand même en fin de scroll
+                once: true,
+                onEnter: reveal,
+                onLeave: reveal, // saut direct par un lien : les blocs dépassés d'un coup restent visibles
+            });
+        };
+        INPUTS.forEach((type) => window.addEventListener(type, arm, { capture: true, passive: true }));
 
         // Passage en mouvement réduit : tout est affiché normalement
-        return () => gsap.set(blocks, { clearProps: 'opacity,visibility,transform' });
+        return () => {
+            INPUTS.forEach((type) => window.removeEventListener(type, arm, true));
+            triggers.forEach((st) => st.kill());
+            gsap.killTweensOf(pending);
+            gsap.set(blocks, { clearProps: 'opacity,visibility,transform' });
+        };
     });
 
     // ============ BARRE DE PROGRESSION : 5 étapes (01 Ciel → 02 Pluie → 03 Terre → 04 Source → 05 Recyclage) ============
