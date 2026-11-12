@@ -10,6 +10,8 @@ class Order extends Model
 {
     use HasFactory;
 
+    public const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
     protected $fillable = ['product_id', 'first_name', 'email', 'size'];
 
     public function product(): BelongsTo

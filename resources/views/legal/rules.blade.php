@@ -1,10 +1,12 @@
 @extends('legal.layout')
 
+@php($date = fn ($key) => \Illuminate\Support\Carbon::parse(config("legal.$key"))->locale('fr')->isoFormat('D MMMM YYYY'))
+
 @section('title', 'Règlement du jeu')
 
 @section('content')
     <h2>1. Dates</h2>
-    <p>Le jeu est ouvert du <strong>1er mars 2027</strong> au <strong>31 mai 2027</strong>. Le tirage final des lots a lieu le <strong>15 juin 2027</strong>.</p>
+    <p>Le jeu est ouvert du <strong>{{ $date('game_starts_on') }}</strong> au <strong>{{ $date('game_ends_on') }}</strong>. Le tirage final des lots a lieu le <strong>{{ $date('final_draw_on') }}</strong>.</p>
 
     <h2>2. Comment participer</h2>
     <ul>

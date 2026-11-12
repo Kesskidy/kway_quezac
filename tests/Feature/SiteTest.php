@@ -26,7 +26,10 @@ class SiteTest extends TestCase
     {
         $product = Product::factory()->create();
 
-        $this->get('/')->assertOk()->assertViewHas('products', fn ($products) => $products->contains($product));
+        $this->get('/')
+            ->assertOk()
+            ->assertViewHas('products', fn ($products) => $products->contains($product))
+            ->assertSee('300 €');
     }
 
     public function test_a_pre_order_is_saved(): void
@@ -71,7 +74,12 @@ class SiteTest extends TestCase
             $this->get($url)->assertOk()->assertSee('Projet fictif');
         }
 
-        $this->get('/reglement')->assertSee('1 code = 1 tirage')->assertSee(config('game.prizes')[1]);
+        $this->get('/reglement')->assertSee('1 code = 1 tirage')->assertSee(config('game.prizes')[1])->assertSee('15 juin 2027');
+    }
+
+    public function test_the_landing_page_shows_the_game_dates(): void
+    {
+        $this->get('/')->assertOk()->assertSee('1 mars 2027')->assertSee('15 juin 2027');
     }
 
     public function test_the_database_seeder_creates_the_demo_data(): void

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -12,7 +14,7 @@ class StoreOrderRequest extends FormRequest
             'product_id' => ['required', 'exists:products,id'],
             'first_name' => ['required', 'string', 'max:50'],
             'email' => ['required', 'email', 'max:255'],
-            'size' => ['nullable', 'in:XS,S,M,L,XL,XXL'],
+            'size' => ['nullable', Rule::in(Order::SIZES)],
         ];
     }
 
