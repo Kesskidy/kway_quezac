@@ -17,6 +17,6 @@ Du ciel à la source,<br>
 L'équipe K-Way × Quézac
 
 <x-mail::subcopy>
-Projet étudiant fictif, sans lien avec les marques K-Way et Quézac : aucun lot n'est réellement attribué.
+Projet étudiant, sans lien avec les marques K-Way et Quézac : aucun lot n'est réellement attribué.
 </x-mail::subcopy>
 </x-mail::message>

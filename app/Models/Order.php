@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Order extends Model
 {
@@ -12,10 +11,5 @@ class Order extends Model
 
     public const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
-    protected $fillable = ['product_id', 'first_name', 'email', 'size'];
-
-    public function product(): BelongsTo
-    {
-        return $this->belongsTo(Product::class);
-    }
+    protected $fillable = ['first_name', 'email', 'size'];
 }

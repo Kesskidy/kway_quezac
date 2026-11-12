@@ -206,23 +206,23 @@
         </svg>
 
         <div class="relative mx-auto max-w-7xl px-8">
-            <div data-terre-intro class="max-w-130">
+            <div data-terre-intro data-reveal="fade" class="max-w-130">
                 <h2 id="titre-terre" class="text-[44px] leading-[1.02] font-bold tracking-[-0.025em]">Trois couches, une eau qui prend vie.</h2>
                 <p class="mt-4.5 text-lg leading-normal text-white/85">La goutte s’infiltre dans les roches des Cévennes. À chaque couche, elle se charge de minéraux.</p>
             </div>
 
             <div class="mt-24 flex flex-col gap-24 lg:gap-32">
-                <article data-terre-card class="w-full max-w-85 rounded-2xl border border-white/15 bg-nuit/80 px-5.5 py-5 transition-[border-color,background-color,box-shadow] duration-500 data-wet:border-source/80 data-wet:bg-source/10 data-wet:shadow-[0_0_40px_rgb(85_136_184/0.35)]">
+                <article data-terre-card data-reveal="fade" class="w-full max-w-85 rounded-2xl border border-white/15 bg-nuit/80 px-5.5 py-5 transition-[border-color,background-color,box-shadow] duration-500 data-wet:border-source/80 data-wet:bg-source/10 data-wet:shadow-[0_0_40px_rgb(85_136_184/0.35)]">
                     <p class="text-xs font-semibold tracking-[.16em] text-sauge uppercase">Mg</p>
                     <h3 class="mt-1.5 text-3xl font-bold tracking-[-0.02em]">Magnésium</h3>
                     <p class="mt-2 leading-normal text-white/85">La goutte entre dans la roche. Premier passage, premiers minéraux.</p>
                 </article>
-                <article data-terre-card class="w-full max-w-85 self-end rounded-2xl border border-white/15 bg-nuit/80 px-5.5 py-5 transition-[border-color,background-color,box-shadow] duration-500 data-wet:border-source/80 data-wet:bg-source/10 data-wet:shadow-[0_0_40px_rgb(85_136_184/0.35)]">
+                <article data-terre-card data-reveal="fade" class="w-full max-w-85 self-end rounded-2xl border border-white/15 bg-nuit/80 px-5.5 py-5 transition-[border-color,background-color,box-shadow] duration-500 data-wet:border-source/80 data-wet:bg-source/10 data-wet:shadow-[0_0_40px_rgb(85_136_184/0.35)]">
                     <p class="text-xs font-semibold tracking-[.16em] text-white/75 uppercase">Ca</p>
                     <h3 class="mt-1.5 text-3xl font-bold tracking-[-0.02em]">Calcium</h3>
                     <p class="mt-2 leading-normal text-white/85">Elle ralentit et se charge. La pierre calcaire lui donne sa structure.</p>
                 </article>
-                <article data-terre-card class="w-full max-w-85 rounded-2xl border border-white/15 bg-nuit/80 px-5.5 py-5 transition-[border-color,background-color,box-shadow] duration-500 data-wet:border-source/80 data-wet:bg-source/10 data-wet:shadow-[0_0_40px_rgb(85_136_184/0.35)]">
+                <article data-terre-card data-reveal="fade" class="w-full max-w-85 rounded-2xl border border-white/15 bg-nuit/80 px-5.5 py-5 transition-[border-color,background-color,box-shadow] duration-500 data-wet:border-source/80 data-wet:bg-source/10 data-wet:shadow-[0_0_40px_rgb(85_136_184/0.35)]">
                     <p class="text-xs font-semibold tracking-[.16em] text-source uppercase">HCO₃⁻</p>
                     <h3 class="mt-1.5 text-3xl font-bold tracking-[-0.02em]">Bicarbonates</h3>
                     <p class="mt-2 leading-normal text-white/85">Dernier passage : l’eau devient pétillante. Les premières bulles apparaissent.</p>
@@ -254,12 +254,12 @@
         <div class="relative mx-auto grid w-full max-w-7xl items-center gap-10 px-8 max-lg:grid-cols-[minmax(0,1fr)] lg:grid-cols-[1fr_auto_1fr]">
             {{-- Bouteille sous le point commun. data-mouth-x / data-mouth-y = ouverture du goulot (fractions de l'image) --}}
             <img data-bottle data-mouth-x="0.5" data-mouth-y="0.02" src="{{ asset('images/bouteille-quezac.png') }}" alt="Bouteille d'eau minérale pétillante Quézac" width="1024" height="1536" class="mx-auto h-[70svh] max-h-[720px] w-auto drop-shadow-[0_0_45px_rgb(85_136_184/0.65)] max-lg:relative max-lg:-left-8 max-lg:-mt-[6svh] max-lg:h-[55svh] max-lg:max-h-[calc((100vw-4rem)*1.5)] max-lg:opacity-50 lg:col-start-2 lg:row-start-1">
-            <div class="max-w-100 max-lg:relative max-lg:z-20 max-lg:order-first lg:col-start-1 lg:row-start-1">
+            <div data-reveal class="max-w-100 max-lg:relative max-lg:z-20 max-lg:order-first lg:col-start-1 lg:row-start-1">
                 <img src="{{ asset('images/logo-quezac.png') }}" alt="Quézac" width="395" height="161" class="h-14 w-auto">
                 <h2 id="titre-source" class="mt-6 text-[44px] leading-[1.02] font-bold tracking-[-0.025em]">Une source,<br>une bouteille.</h2>
                 <p class="mt-4.5 text-lg leading-normal text-white/85">Captée à la source, l’eau gazeuse de Lozère est mise en bouteille depuis 1901. Une fois bue, la bouteille a encore une vie à vivre.</p>
             </div>
-            <div class="max-w-90 max-lg:relative max-lg:z-20 max-lg:mt-6 lg:col-start-3 lg:row-start-1 lg:justify-self-end">
+            <div data-reveal class="max-w-90 max-lg:relative max-lg:z-20 max-lg:mt-6 lg:col-start-3 lg:row-start-1 lg:justify-self-end">
                 <blockquote>
                     <p class="font-serif text-3xl leading-tight font-bold tracking-[-0.015em]">« Un patrimoine à boire, un avenir à bâtir. »</p>
                 </blockquote>
@@ -274,34 +274,34 @@
         <div class="mx-auto max-w-7xl px-8">
             <div>
                 {{-- devant la bouteille qui vient se glisser derrière (section Source en z-10) --}}
-                <h2 id="titre-recyclage" data-recycle-title class="relative z-30 text-[clamp(40px,5vw,68px)] leading-[0.98] font-bold tracking-[-0.03em]">De la bouteille au fil.</h2>
-                <p class="relative z-30 mt-5 max-w-140 text-xl leading-normal text-nuit/80">Les bouteilles Quézac vides sont collectées, puis transformées en fil de polyester recyclé. Ce fil devient le tissu de la veste RE·SOURCE.</p>
+                <h2 id="titre-recyclage" data-recycle-title data-reveal class="relative z-30 text-[clamp(40px,5vw,68px)] leading-[0.98] font-bold tracking-[-0.03em]">De la bouteille au fil.</h2>
+                <p data-reveal class="relative z-30 mt-5 max-w-140 text-xl leading-normal text-nuit/80">Les bouteilles Quézac vides sont collectées, puis transformées en fil de polyester recyclé. Ce fil devient le tissu de la veste RE·SOURCE.</p>
             </div>
 
             {{-- Mobile (max-lg) : le fil est vertical (bordure gauche) et traverse les étapes 1 → 4, une pastille sur chaque numéro.
                  Desktop — le fil (bordure du haut) : chaque visuel est à cheval dessus, centré sur la ligne, sans fond.
                  lg:pt-32 = 8rem sous le fil → bas du visuel à 100% + 8rem − (sa hauteur / 2). Bouteille h-54 → 100% + 1.25rem ; paillettes h-36 → 100% + 3.5rem. En dessous de lg (étapes empilées), il reste au-dessus de son étape --}}
             <ol class="mt-16 grid grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))] gap-6 border-t border-nuit/15 pt-10 max-lg:grid-cols-1 max-lg:gap-14 max-lg:border-t-0 max-lg:border-l-2 max-lg:pt-0 max-lg:pl-5 lg:mt-36 lg:pt-32">
-                <li class="relative flex flex-col gap-3 max-lg:grid max-lg:grid-cols-[auto_1fr] max-lg:items-center max-lg:gap-x-3">
+                <li data-reveal class="relative flex flex-col gap-3 max-lg:grid max-lg:grid-cols-[auto_1fr] max-lg:items-center max-lg:gap-x-3">
                     {{-- une bouteille Quézac, droite. Avec animations : masquée, c'est la bouteille de la section Source qui vient se poser à sa place --}}
                     <img data-collect-bottle src="{{ asset('images/bouteille-quezac.png') }}" alt="" width="1024" height="1536" loading="lazy" aria-hidden="true" class="mb-2 h-54 w-auto self-center max-lg:col-span-2 max-lg:justify-self-center drop-shadow-[0_0_12px_rgb(85_136_184/0.55)] lg:absolute lg:bottom-[calc(100%+1.25rem)] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
                     <p class="font-serif text-4xl font-bold text-source max-lg:relative max-lg:before:absolute max-lg:before:top-1/2 max-lg:before:-left-[calc(1.25rem+7px)] max-lg:before:size-3 max-lg:before:-translate-y-1/2 max-lg:before:rounded-full max-lg:before:bg-current" aria-hidden="true">1</p>
                     <h3 class="text-2xl font-bold tracking-[-0.02em]">Collecte</h3>
                     <p class="leading-normal text-nuit/80 max-lg:col-span-2">Les bouteilles vides sont collectées et triées. Il en faudra 12 de 50 cl pour faire un K-Way.</p>
                 </li>
-                <li class="relative flex flex-col gap-3 max-lg:grid max-lg:grid-cols-[auto_1fr] max-lg:items-center max-lg:gap-x-3">
+                <li data-reveal class="relative flex flex-col gap-3 max-lg:grid max-lg:grid-cols-[auto_1fr] max-lg:items-center max-lg:gap-x-3">
                     <img src="{{ asset('images/paillettes-pet.png') }}" alt="Tas de paillettes de plastique PET transparentes et bleutées, issues de bouteilles broyées" width="420" height="297" loading="lazy" class="mb-2 h-36 w-auto self-center max-lg:col-span-2 max-lg:justify-self-center lg:absolute lg:bottom-[calc(100%+3.5rem)] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
                     <p class="font-serif text-4xl font-bold text-source max-lg:relative max-lg:before:absolute max-lg:before:top-1/2 max-lg:before:-left-[calc(1.25rem+7px)] max-lg:before:size-3 max-lg:before:-translate-y-1/2 max-lg:before:rounded-full max-lg:before:bg-current" aria-hidden="true">2</p>
                     <h3 class="text-2xl font-bold tracking-[-0.02em]">Broyage</h3>
                     <p class="leading-normal text-nuit/80 max-lg:col-span-2">Lavées puis broyées, elles deviennent des paillettes de PET. Environ 15 % de la matière se perd en route.</p>
                 </li>
-                <li class="relative flex flex-col gap-3 max-lg:grid max-lg:grid-cols-[auto_1fr] max-lg:items-center max-lg:gap-x-3">
+                <li data-reveal class="relative flex flex-col gap-3 max-lg:grid max-lg:grid-cols-[auto_1fr] max-lg:items-center max-lg:gap-x-3">
                     <img src="{{ asset('images/bobine-fil.png') }}" alt="Bobine de fil de polyester recyclé bleu" width="246" height="420" loading="lazy" class="mb-2 h-36 w-auto self-center max-lg:col-span-2 max-lg:justify-self-center lg:absolute lg:bottom-[calc(100%+3.5rem)] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
                     <p class="font-serif text-4xl font-bold text-source max-lg:relative max-lg:before:absolute max-lg:before:top-1/2 max-lg:before:-left-[calc(1.25rem+7px)] max-lg:before:size-3 max-lg:before:-translate-y-1/2 max-lg:before:rounded-full max-lg:before:bg-current" aria-hidden="true">3</p>
                     <h3 class="text-2xl font-bold tracking-[-0.02em]">Filage</h3>
                     <p class="leading-normal text-nuit/80 max-lg:col-span-2">Fondues et étirées, les paillettes deviennent un fil de polyester recyclé.</p>
                 </li>
-                <li class="relative flex flex-col gap-3 max-lg:grid max-lg:grid-cols-[auto_1fr] max-lg:items-center max-lg:gap-x-3">
+                <li data-reveal class="relative flex flex-col gap-3 max-lg:grid max-lg:grid-cols-[auto_1fr] max-lg:items-center max-lg:gap-x-3">
                     <img src="{{ asset('images/veste-face-petite.png') }}" alt="Veste RE·SOURCE K-Way × Quézac de face" width="364" height="420" loading="lazy" class="mb-2 h-54 w-auto self-center max-lg:col-span-2 max-lg:justify-self-center lg:absolute lg:bottom-[calc(100%+1.25rem)] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
                     <p class="font-serif text-4xl font-bold text-zip max-lg:relative max-lg:before:absolute max-lg:before:top-1/2 max-lg:before:-left-[calc(1.25rem+7px)] max-lg:before:size-3 max-lg:before:-translate-y-1/2 max-lg:before:rounded-full max-lg:before:bg-current" aria-hidden="true">4</p>
                     <h3 class="text-2xl font-bold tracking-[-0.02em]">Tissage</h3>
@@ -310,7 +310,7 @@
             </ol>
 
             {{-- Clôture : la boucle se referme, retour au ciel du début --}}
-            <div class="mt-16 flex flex-wrap items-center justify-between gap-x-10 gap-y-6 rounded-[28px] bg-nuit px-8 py-8 text-white md:px-10">
+            <div data-reveal class="mt-16 flex flex-wrap items-center justify-between gap-x-10 gap-y-6 rounded-[28px] bg-nuit px-8 py-8 text-white md:px-10">
                 <div class="max-w-160">
                     <p class="font-serif text-[clamp(28px,3.4vw,42px)] leading-tight font-bold">… et la pluie retombe.</p>
                     <p class="mt-3 text-lg leading-normal text-white/80">La veste repart sous l’averse, sur les hauts plateaux où tout a commencé. L’eau ne s’arrête jamais : le cycle recommence.</p>
@@ -329,7 +329,7 @@
     {{-- ============ PRODUIT ============ --}}
     <section id="product" aria-labelledby="titre-collection" class="bg-white py-30 text-nuit">
         <div class="mx-auto max-w-7xl px-8">
-            <div class="max-w-190">
+            <div data-reveal class="max-w-190">
                 <p class="text-xs font-semibold tracking-[.16em] text-cevenol uppercase">La collection</p>
                 <h2 id="titre-collection" class="mt-3.5 text-[clamp(40px,5vw,68px)] leading-[0.98] font-bold tracking-[-0.03em]">La veste qui vient de la source.</h2>
                 <p class="mt-5 text-xl leading-normal text-nuit/80">RE·SOURCE, une veste K-Way tissée à partir de bouteilles Quézac recyclées.</p>
@@ -337,7 +337,7 @@
 
             <div class="mt-16 grid grid-cols-[repeat(auto-fit,minmax(min(480px,100%),1fr))] items-start gap-14">
                 {{-- Visuel : image principale + miniatures. data-fit="contain" = visuel détouré (veste entière sur fond clair), sinon photo plein cadre --}}
-                <div data-gallery class="flex flex-col gap-4">
+                <div data-gallery data-reveal class="flex flex-col gap-4">
                     <figure class="relative aspect-[5/4] overflow-hidden rounded-[28px] bg-source/15">
                         <img data-gallery-main data-fit="contain" src="{{ asset('images/veste-face.png') }}" alt="Veste RE·SOURCE K-Way × Quézac de face : bleu nuit, griffes cuivrées sur l’épaule droite et tracé du GR70 sur la manche gauche" width="1222" height="1287" class="size-full object-cover object-top transition-opacity duration-300 data-[fit=contain]:object-contain data-[fit=contain]:p-6">
                     </figure>
@@ -357,67 +357,80 @@
                     </div>
                 </div>
 
-                {{-- Infos + précommande fictive (POST /orders → retour sur #product avec session('status') ou les erreurs) --}}
+                {{-- Infos + précommande. Avec JS (resources/js/order-modal.js) : vérification des champs, modale
+                     de confirmation, puis envoi en fetch sans rechargement. Sans JS : POST /orders → retour sur #product. --}}
                 @php
-                    $product = ($products ?? collect())->first();
-                    $selectedSize = old('size', 'M');
+                    $selectedSize = ($errors->order->any() ? old('size', 'M') : 'M');
                 @endphp
-                <div class="flex flex-col gap-7.5">
+                <div data-reveal class="flex flex-col gap-7.5">
                     <div>
                         <img src="{{ asset('images/logo-resource-nuit.png') }}" alt="RE·SOURCE by K-Way × Quézac" width="3640" height="684" class="mb-6 h-14 w-auto">
                         <h3 class="text-[34px] leading-[1.05] font-bold tracking-[-0.02em]">Veste RE·SOURCE<br>K-Way × Quézac</h3>
                         <div class="mt-4.5 flex flex-wrap items-baseline gap-4">
-                            <p class="font-serif text-[40px] font-bold">{{ $product?->formattedPrice() ?? '300 €' }}</p>
+                            <p class="font-serif text-[40px] font-bold">300 €</p>
                             <p class="text-[15px] text-nuit/80">Édition limitée · 50 000 exemplaires</p>
                         </div>
                     </div>
 
-                    @if (session('status'))
-                        <p id="order-status" role="status" class="rounded-2xl border-[1.5px] border-source bg-source/10 px-5 py-4 leading-normal font-medium">{{ session('status') }}</p>
-                    @endif
+                    <p id="order-status" data-order-status role="status" tabindex="-1" class="rounded-2xl border-[1.5px] border-source bg-source/10 px-5 py-4 leading-normal font-medium empty:hidden focus:outline-none data-[state=error]:border-zip data-[state=error]:bg-zip/10">{{ session('status') }}</p>
 
-                    @if ($product)
-                        <form id="order-form" method="POST" action="{{ route('orders.store') }}" class="flex flex-col gap-6" novalidate>
-                            @csrf
-                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                            @error('product_id')<p class="text-sm font-semibold text-zip" role="alert">{{ $message }}</p>@enderror
+                    <form id="order-form" method="POST" action="{{ route('orders.store') }}" class="flex flex-col gap-6" novalidate>
+                        @csrf
 
-                            <fieldset>
-                                <legend class="text-sm font-semibold tracking-[.04em]">Taille : <span data-size-label>{{ $selectedSize }}</span></legend>
-                                <div data-size-group class="mt-3 flex flex-wrap gap-2.5">
-                                    @foreach (\App\Models\Order::SIZES as $size)
-                                        <label class="cursor-pointer">
-                                            <input type="radio" name="size" value="{{ $size }}" class="peer sr-only" @checked($selectedSize === $size)>
-                                            <span class="inline-flex min-h-12 min-w-14 items-center justify-center rounded-xl border-[1.5px] border-nuit/30 bg-white px-3 text-[15px] font-medium transition-colors peer-checked:border-2 peer-checked:border-nuit peer-checked:bg-nuit peer-checked:font-semibold peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-source hover:border-nuit">{{ $size }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                                @error('size')<p class="mt-2 text-sm font-semibold text-zip" role="alert">{{ $message }}</p>@enderror
-                            </fieldset>
-
-                            <div class="grid gap-4 sm:grid-cols-2">
-                                <div class="flex flex-col gap-2">
-                                    <label for="order-first-name" class="text-sm font-semibold">Prénom</label>
-                                    <input id="order-first-name" name="first_name" type="text" autocomplete="given-name" maxlength="50" required value="{{ old('first_name') }}" @error('first_name') aria-invalid="true" aria-describedby="order-first-name-error" @enderror class="min-h-13 w-full rounded-[14px] border-[1.5px] border-nuit/30 px-4.5 font-medium focus:border-source focus:outline-none aria-invalid:border-zip">
-                                    @error('first_name')<p id="order-first-name-error" class="text-sm font-semibold text-zip">{{ $message }}</p>@enderror
-                                </div>
-                                <div class="flex flex-col gap-2">
-                                    <label for="order-email" class="text-sm font-semibold">Adresse e-mail</label>
-                                    <input id="order-email" name="email" type="email" autocomplete="email" maxlength="255" required value="{{ old('email') }}" @error('email') aria-invalid="true" aria-describedby="order-email-error" @enderror class="min-h-13 w-full rounded-[14px] border-[1.5px] border-nuit/30 px-4.5 font-medium focus:border-source focus:outline-none aria-invalid:border-zip">
-                                    @error('email')<p id="order-email-error" class="text-sm font-semibold text-zip">{{ $message }}</p>@enderror
-                                </div>
+                        <fieldset>
+                            <legend class="text-sm font-semibold tracking-[.04em]">Taille : <span data-size-label>{{ $selectedSize }}</span></legend>
+                            <div data-size-group class="mt-3 flex flex-wrap gap-2.5">
+                                @foreach (\App\Models\Order::SIZES as $size)
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="size" value="{{ $size }}" class="peer sr-only" @checked($selectedSize === $size)>
+                                        <span class="inline-flex min-h-12 min-w-14 items-center justify-center rounded-xl border-[1.5px] border-nuit/30 bg-white px-3 text-[15px] font-medium transition-colors peer-checked:border-2 peer-checked:border-nuit peer-checked:bg-nuit peer-checked:font-semibold peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-source hover:border-nuit">{{ $size }}</span>
+                                    </label>
+                                @endforeach
                             </div>
+                            <p data-field-error="size" role="alert" class="mt-2 text-sm font-semibold text-zip empty:hidden">{{ $errors->order->first('size') }}</p>
+                        </fieldset>
 
-                            <div class="flex flex-col gap-2.5">
-                                <button type="submit" class="inline-flex min-h-15 cursor-pointer items-center self-start rounded-full bg-zip px-8 text-[17px] font-bold text-nuit hover:opacity-90"><span>Précommander · Taille <span data-size-label>{{ $selectedSize }}</span> · {{ $product->formattedPrice() }}</span></button>                            </div>
-                        </form>
-                    @endif
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div class="flex flex-col gap-2">
+                                <label for="order-first-name" class="text-sm font-semibold">Prénom</label>
+                                <input id="order-first-name" name="first_name" type="text" autocomplete="given-name" maxlength="50" required value="{{ ($errors->order->any() ? old('first_name') : null) }}" @error('first_name', 'order') aria-invalid="true" @enderror aria-describedby="order-first-name-error" class="min-h-13 w-full rounded-[14px] border-[1.5px] border-nuit/30 px-4.5 font-medium focus:border-source focus:outline-none aria-invalid:border-zip">
+                                <p id="order-first-name-error" data-field-error="first_name" class="text-sm font-semibold text-zip empty:hidden">{{ $errors->order->first('first_name') }}</p>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label for="order-email" class="text-sm font-semibold">Adresse e-mail</label>
+                                <input id="order-email" name="email" type="email" autocomplete="email" maxlength="255" required value="{{ ($errors->order->any() ? old('email') : null) }}" @error('email', 'order') aria-invalid="true" @enderror aria-describedby="order-email-error" class="min-h-13 w-full rounded-[14px] border-[1.5px] border-nuit/30 px-4.5 font-medium focus:border-source focus:outline-none aria-invalid:border-zip">
+                                <p id="order-email-error" data-field-error="email" class="text-sm font-semibold text-zip empty:hidden">{{ $errors->order->first('email') }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2.5">
+                            <button type="submit" class="inline-flex min-h-15 cursor-pointer items-center self-start rounded-full bg-zip px-8 text-[17px] font-bold text-nuit hover:opacity-90">S’inscrire à la précommande</button>
+                        </div>
+                    </form>
+
+                    {{-- Confirmation avant l'envoi (resources/js/order-modal.js) --}}
+                    <dialog data-order-dialog aria-labelledby="order-dialog-title" class="m-auto w-[min(30rem,calc(100%-2rem))] rounded-[28px] bg-white p-0 text-nuit shadow-[0_30px_80px_rgb(4_9_40/0.45)] backdrop:bg-nuit/75 backdrop:backdrop-blur-sm">
+                        <div class="flex flex-col gap-5 p-6 sm:p-8">
+                            <h2 id="order-dialog-title" class="font-serif text-2xl font-bold">Confirmer ton inscription</h2>
+                            <p class="leading-normal">Tu t’inscris à la précommande de la <strong>Veste RE·SOURCE K-Way × Quézac</strong>.</p>
+                            <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 rounded-2xl bg-source/10 px-5 py-4">
+                                <dt class="font-semibold">Taille</dt><dd data-order-confirm="size"></dd>
+                                <dt class="font-semibold">Prénom</dt><dd data-order-confirm="first_name" class="break-all"></dd>
+                                <dt class="font-semibold">E-mail</dt><dd data-order-confirm="email" class="break-all"></dd>
+                            </dl>
+                            <p class="text-sm leading-normal text-nuit/80">Aucun paiement n’est demandé.</p>
+                            <div class="flex flex-wrap gap-3">
+                                <button type="button" data-order-confirm-submit class="inline-flex min-h-13 cursor-pointer items-center rounded-full bg-zip px-6 font-bold text-nuit hover:opacity-90 disabled:cursor-wait disabled:opacity-60">Confirmer l’inscription</button>
+                                <button type="button" data-order-cancel class="inline-flex min-h-13 cursor-pointer items-center rounded-full border-[1.5px] border-nuit/30 px-6 font-semibold hover:border-nuit">Modifier</button>
+                            </div>
+                        </div>
+                    </dialog>
                 </div>
             </div>
 
             {{-- Les 3 atouts, en ligne --}}
             <ul class="mt-14 grid gap-8 border-t border-nuit/15 pt-10 md:grid-cols-3">
-                <li class="flex items-start gap-4">
+                <li data-reveal class="flex items-start gap-4">
                     <span class="relative size-11 flex-none rounded-full bg-source/20" aria-hidden="true">
                     <img src="{{ asset('images/bouteille-quezac.png') }}" alt="" width="1024" height="1536" loading="lazy" class="absolute bottom-1 left-1/2 h-14 w-auto max-w-none -translate-x-1/2 rotate-15 drop-shadow-[0_0_6px_rgb(85_136_184/0.6)]">
                 </span>
@@ -426,14 +439,14 @@
                         <p class="mt-1 text-[15px] leading-normal text-nuit/80">La bouteille qui a contenu l’eau devient le tissu de la veste. <a href="#recyclage" class="underline underline-offset-2">Voir le recyclage</a></p>
                     </div>
                 </li>
-                <li class="flex items-start gap-4">
+                <li data-reveal class="flex items-start gap-4">
                     <img src="{{ asset('images/icone-gr70.png') }}" alt="" width="123" height="141" loading="lazy" class="size-11 flex-none object-contain" aria-hidden="true">
                     <div>
                         <h4 class="font-sans text-[17px] font-semibold">Trace GPX du GR70 imprimée sur le bras</h4>
                         <p class="mt-1 text-[15px] leading-normal text-nuit/80">Du Puy-en-Velay à Saint-Jean-du-Gard, le chemin de Stevenson porté sur soi.</p>
                     </div>
                 </li>
-                <li class="flex items-start gap-4">
+                <li data-reveal class="flex items-start gap-4">
                     <span class="relative grid size-11 flex-none place-items-center rounded-full bg-source/20" aria-hidden="true">
                     {{-- même goutte que celle du ciel : bleu source + reflet blanc --}}
                     <svg viewBox="0 0 24 32" class="h-7 w-auto text-source" focusable="false">
@@ -454,38 +467,108 @@
     <section id="valeurs" aria-labelledby="titre-valeurs" class="relative overflow-hidden bg-nuit py-30">
         <div class="pointer-events-none absolute -top-60 left-1/2 h-150 w-275 -translate-x-1/2 rounded-full bg-radial from-source/15 to-transparent to-65%" aria-hidden="true"></div>
         <div class="relative mx-auto max-w-7xl px-8">
-            <div class="max-w-205">
+            <div data-reveal class="max-w-205">
                 <p class="text-xs font-semibold tracking-[.16em] text-source uppercase">Valeurs communes</p>
                 <h2 id="titre-valeurs" class="mt-3.5 text-[clamp(40px,5vw,68px)] leading-[0.98] font-bold tracking-[-0.03em]">Quatre valeurs, une même eau.</h2>
                 <p class="mt-5 text-xl leading-normal text-white/85">K-Way protège de l’eau qui tombe, Quézac offre l’eau qui désaltère. Deux marques françaises, un seul cycle : c’est pour ça qu’est née RE·SOURCE.</p>
             </div>
 
             <div class="mt-16 grid grid-cols-[repeat(auto-fit,minmax(min(270px,100%),1fr))] gap-5">
-                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
+                <article data-reveal class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
                     <p class="text-[13px] font-semibold tracking-[.14em] text-source">01</p>
                     <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">L’élément<br>Eau</h3>
                     <p class="text-[17px] leading-relaxed text-white/85">Protection extérieure d’un côté, hydratation intérieure de l’autre. La même eau, vécue de deux façons.</p>
                     <p class="mt-auto flex items-center gap-2.5 text-sm font-semibold"><span class="text-zip">K-Way</span><span class="h-px flex-1 bg-white/25" aria-hidden="true"></span><span class="text-source">Quézac</span></p>
                 </article>
-                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
+                <article data-reveal class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
                     <p class="text-[13px] font-semibold tracking-[.14em] text-source">02</p>
                     <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">Héritage &amp;<br>Authenticité</h3>
                     <p class="text-[17px] leading-relaxed text-white/85">Deux marques pionnières du patrimoine français, qui unissent tradition et innovation.</p>
                     <p class="mt-auto flex items-baseline gap-3.5 font-serif text-[44px] font-bold tracking-[-0.02em]"><span class="text-source">1901</span><span class="h-px flex-1 bg-white/25" aria-hidden="true"></span><span class="text-zip">1965</span></p>
                     <p class="flex justify-between text-[13px] text-white/75"><span>Quézac</span><span>K-Way</span></p>
                 </article>
-                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
+                <article data-reveal class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
                     <p class="text-[13px] font-semibold tracking-[.14em] text-source">03</p>
                     <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">Nature &amp;<br>Mouvement</h3>
                     <p class="text-[17px] leading-relaxed text-white/85">L’esprit de découverte, l’outdoor nomade, le mouvement. Un sentier, une veste, une gourde.</p>
                     <p class="mt-auto text-sm text-sauge">GR70</p>
                 </article>
-                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl bg-zip p-7.5 text-nuit">
-                    <p class="text-[13px] font-bold tracking-[.14em]">04</p>
+                <article data-reveal class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
+                    <p class="text-[13px] font-semibold tracking-[.14em] text-source">04</p>
                     <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">Engagement</h3>
-                    <blockquote><p class="font-serif text-[22px] leading-tight font-bold">« Un patrimoine à boire, un avenir à bâtir. »</p></blockquote>
-                    <p class="leading-normal">Transformer une ressource minérale et son emballage en un vêtement durable.</p>
+                    <blockquote><p class="font-serif text-[22px] leading-tight font-bold text-source">« Un patrimoine à boire, un avenir à bâtir. »</p></blockquote>
+                    <p class="text-[17px] leading-relaxed text-white/85">Transformer une ressource minérale et son emballage en un vêtement durable.</p>
                 </article>
+            </div>
+        </div>
+    </section>
+
+    {{-- ============ L'EXPÉDITION RE·SOURCE (inscription à la randonnée sur le GR70) ============
+         Avec JS (resources/js/simple-form.js) : vérification des champs puis envoi en fetch, sans rechargement.
+         Sans JS : POST /expedition → retour sur #expedition avec le message ou les erreurs. --}}
+    <section id="expedition" aria-labelledby="titre-expedition" class="relative overflow-hidden bg-cevenol py-30">
+        <div class="pointer-events-none absolute -right-40 -bottom-60 size-150 rounded-full bg-radial from-sauge/35 to-transparent to-65%" aria-hidden="true"></div>
+        <div class="relative mx-auto grid max-w-7xl grid-cols-[repeat(auto-fit,minmax(min(460px,100%),1fr))] items-start gap-14 px-8">
+            <div data-reveal>
+                <p class="flex items-center gap-3 text-xs font-semibold tracking-[.16em] text-white/85 uppercase">
+                    <img src="{{ asset('images/icone-gr70.png') }}" alt="" width="123" height="141" loading="lazy" class="h-7 w-auto" aria-hidden="true">
+                    L’Expédition RE·SOURCE · GR70
+                </p>
+                <h2 id="titre-expedition" class="mt-5 text-[clamp(40px,5vw,68px)] leading-[0.98] font-bold tracking-[-0.03em]">Viens la tester<br>sous l’averse.</h2>
+                <p class="mt-6 max-w-130 text-xl leading-normal text-white/85">Une randonnée sur le chemin de Stevenson, en pleine saison des pluies. Pas de vitrine ni de cabine d’essayage : la veste RE·SOURCE face au vrai temps cévenol, celui pour lequel elle a été pensée.</p>
+
+                <ul class="mt-10 flex max-w-130 flex-col gap-4">
+                    <li data-reveal class="flex gap-4 rounded-2xl border border-white/15 bg-nuit/25 p-5">
+                        <span class="mt-1.5 size-3 flex-none rounded-full bg-zip" aria-hidden="true"></span>
+                        <div>
+                            <h3 class="font-sans text-[17px] font-semibold">Pop-up K-Way sur le parcours</h3>
+                            <p class="mt-1 text-[15px] leading-normal text-white/80">La collection t’attend au bord du sentier : tu l’essaies là où elle sert, et tu peux repartir avec.</p>
+                        </div>
+                    </li>
+                    <li data-reveal class="flex gap-4 rounded-2xl border border-white/15 bg-nuit/25 p-5">
+                        <span class="mt-1.5 size-3 flex-none rounded-full bg-source" aria-hidden="true"></span>
+                        <div>
+                            <h3 class="font-sans text-[17px] font-semibold">Une station Quézac à chaque étape</h3>
+                            <p class="mt-1 text-[15px] leading-normal text-white/80">Un ravitaillement en eau de la source à chaque fin d’étape, pour repartir le lendemain.</p>
+                        </div>
+                    </li>
+                    <li data-reveal class="flex gap-4 rounded-2xl border border-white/15 bg-nuit/25 p-5">
+                        <span class="mt-1.5 size-3 flex-none rounded-full bg-white" aria-hidden="true"></span>
+                        <div>
+                            <h3 class="font-sans text-[17px] font-semibold">La collab, en vrai</h3>
+                            <p class="mt-1 text-[15px] leading-normal text-white/80">K-Way × Quézac, ailleurs que sur un écran : sur le terrain, dans la boue et sous la pluie, ensemble.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div data-reveal class="rounded-[28px] bg-nuit p-6 text-white shadow-[0_30px_60px_rgb(4_9_40/0.35)] sm:p-9 lg:mt-14">
+                <h3 class="font-serif text-[28px] leading-tight font-bold">Rejoins l’expédition</h3>
+                <p class="mt-3 leading-normal text-white/80">Laisse ton prénom et ton e-mail : les dates et le programme des étapes te seront envoyés.</p>
+
+                <form id="expedition-form" method="POST" action="{{ route('expedition.store') }}" class="mt-6.5 flex flex-col gap-4.5" novalidate>
+                    @csrf
+                    <div class="flex flex-col gap-2">
+                        <label for="expedition-first-name" class="text-sm font-semibold">Prénom</label>
+                        <input id="expedition-first-name" name="first_name" type="text" autocomplete="given-name" maxlength="50" required value="{{ ($errors->expedition->any() ? old('first_name') : null) }}" @error('first_name', 'expedition') aria-invalid="true" @enderror aria-describedby="expedition-first-name-error" class="min-h-13 w-full rounded-[14px] border-[1.5px] border-white/35 bg-white/10 px-4.5 font-medium focus:border-source focus:outline-none aria-invalid:border-zip">
+                        <p id="expedition-first-name-error" data-field-error="first_name" class="text-sm font-semibold text-zip empty:hidden">{{ $errors->expedition->first('first_name') }}</p>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="expedition-email" class="text-sm font-semibold">Adresse e-mail</label>
+                        <input id="expedition-email" name="email" type="email" autocomplete="email" maxlength="255" required placeholder="prenom@exemple.fr" value="{{ ($errors->expedition->any() ? old('email') : null) }}" @error('email', 'expedition') aria-invalid="true" @enderror aria-describedby="expedition-email-error" class="min-h-13 w-full rounded-[14px] border-[1.5px] border-white/35 bg-white/10 px-4.5 font-medium placeholder:text-white/60 focus:border-source focus:outline-none aria-invalid:border-zip">
+                        <p id="expedition-email-error" data-field-error="email" class="text-sm font-semibold text-zip empty:hidden">{{ $errors->expedition->first('email') }}</p>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-start gap-3">
+                            <input id="expedition-consent" name="consent" type="checkbox" value="1" required @checked(($errors->expedition->any() ? old('consent') : null)) @error('consent', 'expedition') aria-invalid="true" @enderror aria-describedby="expedition-consent-error" class="mt-0.5 size-5.5 flex-none accent-zip">
+                            <label for="expedition-consent" class="text-sm leading-normal text-white/85">J’accepte que mon prénom et mon e-mail servent à organiser l’expédition et à me contacter à son sujet. <a href="{{ route('legal.privacy') }}" class="underline underline-offset-2">Confidentialité</a></label>
+                        </div>
+                        <p id="expedition-consent-error" data-field-error="consent" class="text-sm font-semibold text-zip empty:hidden">{{ $errors->expedition->first('consent') }}</p>
+                    </div>
+                    <button type="submit" class="inline-flex min-h-14.5 cursor-pointer items-center justify-center rounded-full bg-zip text-[17px] font-bold text-nuit hover:opacity-90 disabled:cursor-wait disabled:opacity-60">Je m’inscris à l’expédition</button>
+                </form>
+
+                <p id="expedition-status" data-expedition-status role="status" tabindex="-1" class="mt-5 rounded-2xl border-[1.5px] border-source bg-source/15 px-5 py-4 leading-normal font-medium empty:hidden focus:outline-none data-[state=error]:border-zip data-[state=error]:bg-zip/15">{{ session('expedition_status') }}</p>
             </div>
         </div>
     </section>
@@ -494,15 +577,12 @@
          1. code de la bouteille → POST /api/game-sessions (le serveur tire le résultat)
          2. animation de 10 s (#game-stage, data-outcome / data-scenario posés par le JS), bouton « Passer »
          3. fin gagnante → formulaire de participation (POST /api/game-sessions/{token}/participation) ; fin perdante → « Presque ! » --}}
-    @php
-        $gameDate = fn (string $key) => \Illuminate\Support\Carbon::parse(config("legal.$key"))->locale('fr')->isoFormat('D MMMM YYYY');
-    @endphp
     <section id="game" data-api-base="{{ url('/api') }}" aria-labelledby="titre-jeu" class="relative overflow-hidden bg-source py-30 text-nuit">
         <div class="pointer-events-none absolute -top-30 -right-30 size-155 rounded-full bg-white/25" aria-hidden="true"></div>
         <div class="pointer-events-none absolute -bottom-55 -left-40 size-140 rounded-full bg-nuit/10" aria-hidden="true"></div>
         <div class="relative mx-auto grid max-w-7xl grid-cols-[repeat(auto-fit,minmax(min(460px,100%),1fr))] items-center gap-14 px-8">
-            <div>
-                <p class="inline-flex min-h-9 items-center rounded-full bg-nuit px-4 text-[13px] font-semibold tracking-[.08em] text-white uppercase">Jeu · du {{ $gameDate('game_starts_on') }} au {{ $gameDate('game_ends_on') }}</p>
+            <div data-reveal>
+                <p class="inline-flex min-h-9 items-center rounded-full bg-nuit px-4 text-[13px] font-semibold tracking-[.08em] text-white uppercase">Jeu · du 1er octobre au 30 novembre 2027</p>
                 <h2 id="titre-jeu" class="mt-5.5 text-[clamp(44px,6vw,86px)] leading-[0.94] font-bold tracking-[-0.035em]">Remonte à<br>la source.</h2>
                 <p class="mt-6 max-w-130 text-xl leading-normal">Chaque bouteille Quézac cache un code. Saisis-le et suis le randonneur sous la pluie : à l’arrivée, tu sauras tout de suite si tu as gagné ta participation au tirage des lots.</p>
                 <ol class="mt-8 flex max-w-130 flex-col gap-3.5 text-[17px] font-semibold">
@@ -510,10 +590,10 @@
                     <li class="flex items-center gap-4"><span class="flex size-11 flex-none items-center justify-center rounded-full bg-nuit font-serif text-lg font-bold text-white" aria-hidden="true">2</span>Saisis-le : 1 code = 1 tirage</li>
                     <li class="flex items-center gap-4"><span class="flex size-11 flex-none items-center justify-center rounded-full bg-nuit font-serif text-lg font-bold text-white" aria-hidden="true">3</span>Gagné ? Laisse ton prénom et ton e-mail</li>
                 </ol>
-                <p class="mt-6 max-w-130 text-[15px] leading-normal">Tirage final des lots le {{ $gameDate('final_draw_on') }}. <a href="{{ route('legal.rules') }}" data-rules-modal aria-haspopup="dialog" class="font-semibold underline underline-offset-2">Lire le règlement</a></p>
+                <p class="mt-6 max-w-130 text-[15px] leading-normal">Tirage final des lots le 10 décembre 2027. <a href="{{ route('legal.rules') }}" data-rules-modal aria-haspopup="dialog" class="font-semibold underline underline-offset-2">Lire le règlement</a></p>
             </div>
 
-            <div class="rounded-[28px] bg-nuit p-6 text-white shadow-[0_30px_60px_rgb(4_9_40/0.35)] sm:p-9">
+            <div data-reveal class="rounded-[28px] bg-nuit p-6 text-white shadow-[0_30px_60px_rgb(4_9_40/0.35)] sm:p-9">
                 {{-- Étape 1 : le code --}}
                 <div data-game-panel="code">
                     <h3 class="text-[32px] leading-[1.05] font-bold tracking-[-0.02em]">Je tente ma chance</h3>
@@ -579,6 +659,43 @@
 
                     <button type="button" data-game-replay class="mt-6 inline-flex min-h-12 cursor-pointer items-center rounded-full border-[1.5px] border-white/60 px-5 font-semibold hover:bg-white/10">Jouer avec un autre code</button>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ============ NEWSLETTER (juste avant le pied de page) ============
+         Avec JS (resources/js/simple-form.js) : vérification des champs puis envoi en fetch, sans rechargement.
+         Sans JS : POST /newsletter → retour sur #newsletter avec le message ou les erreurs. --}}
+    <section id="newsletter" aria-labelledby="titre-newsletter" class="bg-white py-24 text-nuit">
+        <div class="mx-auto grid max-w-7xl grid-cols-[repeat(auto-fit,minmax(min(420px,100%),1fr))] items-center gap-12 px-8">
+            <div data-reveal class="max-w-130">
+                <p class="text-xs font-semibold tracking-[.16em] text-cevenol uppercase">Newsletter</p>
+                <h2 id="titre-newsletter" class="mt-3.5 text-[clamp(36px,4.5vw,56px)] leading-[0.98] font-bold tracking-[-0.03em]">Garde le fil.</h2>
+                <p class="mt-5 text-lg leading-normal text-nuit/80">Sortie de la veste, résultats du tirage, prochaines étapes du cycle : reçois les nouvelles de RE·SOURCE, sans spam.</p>
+            </div>
+
+            <div data-reveal>
+                <form id="newsletter-form" method="POST" action="{{ route('newsletter.store') }}" class="flex flex-col gap-4.5" novalidate>
+                    @csrf
+                    <div class="flex flex-col gap-2">
+                        <label for="newsletter-email" class="text-sm font-semibold">Adresse e-mail</label>
+                        <div class="flex flex-col gap-3 sm:flex-row">
+                            <input id="newsletter-email" name="email" type="email" autocomplete="email" maxlength="255" required placeholder="prenom@exemple.fr" value="{{ ($errors->newsletter->any() ? old('email') : null) }}" @error('email', 'newsletter') aria-invalid="true" @enderror aria-describedby="newsletter-email-error" class="min-h-13 w-full min-w-0 flex-1 rounded-[14px] border-[1.5px] border-nuit/30 px-4.5 font-medium placeholder:text-nuit/50 focus:border-source focus:outline-none aria-invalid:border-zip">
+                            <button type="submit" class="inline-flex min-h-13 flex-none cursor-pointer items-center justify-center rounded-full bg-zip px-7 font-bold text-nuit hover:opacity-90 disabled:cursor-wait disabled:opacity-60">S’inscrire</button>
+                        </div>
+                        <p id="newsletter-email-error" data-field-error="email" class="text-sm font-semibold text-zip empty:hidden">{{ $errors->newsletter->first('email') }}</p>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-start gap-3">
+                            <input id="newsletter-consent" name="consent" type="checkbox" value="1" required @checked(($errors->newsletter->any() ? old('consent') : null)) @error('consent', 'newsletter') aria-invalid="true" @enderror aria-describedby="newsletter-consent-error" class="mt-0.5 size-5.5 flex-none accent-nuit">
+                            <label for="newsletter-consent" class="text-sm leading-normal text-nuit/80">J’accepte de recevoir la newsletter RE·SOURCE par e-mail. Je peux me désinscrire à tout moment. <a href="{{ route('legal.privacy') }}" class="font-semibold underline underline-offset-2">Confidentialité</a></label>
+                        </div>
+                        <p id="newsletter-consent-error" data-field-error="consent" class="text-sm font-semibold text-zip empty:hidden">{{ $errors->newsletter->first('consent') }}</p>
+                    </div>
+                </form>
+
+                <p id="newsletter-status" data-newsletter-status role="status" tabindex="-1" class="mt-5 rounded-2xl border-[1.5px] border-source bg-source/10 px-5 py-4 leading-normal font-medium empty:hidden focus:outline-none data-[state=error]:border-zip data-[state=error]:bg-zip/10">{{ session('newsletter_status') }}</p>
             </div>
         </div>
     </section>

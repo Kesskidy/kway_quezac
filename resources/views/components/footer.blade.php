@@ -1,7 +1,7 @@
 <footer class="bg-nuit pt-20 pb-12 text-white">
     <div class="mx-auto max-w-7xl px-8">
         <div class="flex flex-wrap items-start justify-between gap-12">
-            <div class="max-w-md">
+            <div data-reveal class="max-w-md">
                 <a href="{{ route('landing') }}#histoire" class="inline-block">
                     <img src="{{ asset('images/logo-resource-source.png') }}" alt="RE·SOURCE by K-Way × Quézac — accueil" width="3330" height="469" class="h-10 w-auto">
                 </a>
@@ -16,7 +16,7 @@
                     </a>
                 </div>
             </div>
-            <nav aria-label="Pied de page" class="flex flex-wrap gap-16">
+            <nav data-reveal aria-label="Pied de page" class="flex flex-wrap gap-16">
                 <div>
                     <h2 class="font-sans text-xs font-semibold tracking-[.16em] text-source uppercase">Explorer</h2>
                     <ul class="mt-3.5 flex flex-col text-[15px]">
@@ -24,6 +24,7 @@
                         <li><a href="#recyclage" class="inline-flex min-h-11 items-center hover:text-source">Le recyclage</a></li>
                         <li><a href="#product" class="inline-flex min-h-11 items-center hover:text-source">La collection</a></li>
                         <li><a href="#valeurs" class="inline-flex min-h-11 items-center hover:text-source">Les valeurs</a></li>
+                        <li><a href="#expedition" class="inline-flex min-h-11 items-center hover:text-source">L’expédition</a></li>
                         <li><a href="#game" class="inline-flex min-h-11 items-center hover:text-source">Le jeu</a></li>
                     </ul>
                 </div>

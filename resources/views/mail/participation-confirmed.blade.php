@@ -15,6 +15,6 @@ Merci d'avoir joué,<br>
 L'équipe K-Way × Quézac
 
 <x-mail::subcopy>
-Projet étudiant fictif, sans lien avec les marques K-Way et Quézac.
+Projet étudiant, sans lien avec les marques K-Way et Quézac.
 </x-mail::subcopy>
 </x-mail::message>
