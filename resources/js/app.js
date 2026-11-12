@@ -2,22 +2,22 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initGame } from './game/game';
 import { initRulesModal } from './rules-modal';
+import { initOrderModal } from './order-modal';
+import { initSimpleForms } from './simple-form';
 
 gsap.registerPlugin(ScrollTrigger);
-
-// Expose GSAP globally (handy in Blade inline scripts / the console)
-window.gsap = gsap;
-window.ScrollTrigger = ScrollTrigger;
 
 document.addEventListener('DOMContentLoaded', () => {
     initGame(); // jeu concours (#game) : en premier, indépendant des scènes animées plus bas
     initRulesModal(); // règlement du jeu en modale
+    initOrderModal(); // confirmation de la précommande
+    initSimpleForms(); // inscriptions newsletter et Expédition RE·SOURCE
     const mm = gsap.matchMedia();
-    // Partagé entre la scène accrochée et la section Terre : hauteur des flaques par rapport au bas de la scène
+    const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Mise en page desktop (lg = 64rem) : en dessous, version mobile/tablette des scènes
     const isDesktop = () => window.matchMedia('(min-width: 64rem)').matches;
     // Inclinaison de la bouteille de la Source : 30° (« / ») sur mobile avec animations, droite sinon
-    const bottleTilt = () => (isDesktop() || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 30);
+    const bottleTilt = () => (isDesktop() || reducedMotion() ? 0 : 30);
     // Position d'un élément dans un ancêtre, sans tenir compte des transforms (animations GSAP, pin)
     const offsetIn = (el, anc) => {
         let x = 0;
@@ -29,7 +29,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return { x, y };
     };
+    // Valeurs partagées entre les scènes (ex. hauteur des flaques pour les tracés de la Terre, repères de la barre de progression)
     const shared = { navigating: false, finishSeq: null, replaySeq: null, poolOffset: null, handoff: false, renderTerre: null, stageST: null, detachAt: null, terreST: null, sourceST: null, sourcePinST: null };
+
+    // ============ DÉFILEMENT DOUX (barre de progression, liens « #recyclage », bouton ↑, « Remonter au ciel ») ============
+    // Piloté par GSAP : le « smooth » natif est trop rapide et sa vitesse n'est pas réglable.
+    // Durée selon la distance (1,2 s à 3 s) ; l'utilisateur reprend la main s'il scrolle pendant le trajet.
+    let scrollTween;
+    function smoothScrollTo(target, onDone) {
+        scrollTween?.kill(); // un trajet précédent s'arrête (avant de repasser en navigation)
+        shared.navigating = true; // pendant le trajet, la scène de la goutte ne bloque pas le scroll
+        const stop = () => scrollTween?.kill();
+        const done = () => {
+            shared.navigating = false;
+            ['wheel', 'touchstart', 'keydown'].forEach((ev) => window.removeEventListener(ev, stop));
+            onDone?.();
+        };
+        if (reducedMotion()) {
+            window.scrollTo(0, target);
+            return done();
+        }
+        const pos = { y: window.scrollY };
+        scrollTween = gsap.to(pos, {
+            y: target,
+            duration: gsap.utils.clamp(1.2, 3, Math.abs(target - pos.y) / 1200),
+            ease: 'power2.inOut',
+            onUpdate: () => window.scrollTo(0, pos.y),
+            onComplete: done,
+            onInterrupt: done,
+        });
+        ['wheel', 'touchstart', 'keydown'].forEach((ev) => window.addEventListener(ev, stop, { once: true, passive: true }));
+    }
 
     // ============ MENU MOBILE (burger) ============
     const header = document.querySelector('[data-site-header]');
@@ -55,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         // repassage en desktop menu ouvert : on le referme
-        window.matchMedia('(min-width: 48rem)').addEventListener('change', (e) => e.matches && setMenu(false));
+        window.matchMedia('(min-width: 64rem)').addEventListener('change', (e) => e.matches && setMenu(false));
     }
 
     // ============ RETOUR EN HAUT ============
@@ -64,33 +94,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const showToTop = () => toTop.toggleAttribute('data-visible', window.scrollY > 10);
         window.addEventListener('scroll', showToTop, { passive: true });
         showToTop();
-        toTop.addEventListener('click', () => scrollToSky());
+        toTop.addEventListener('click', () => smoothScrollTo(0));
     }
     // « Remonter au ciel » (fin du Recyclage) : même remontée douce que le bouton
     document.querySelectorAll('[data-to-sky]').forEach((link) =>
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            scrollToSky();
+            smoothScrollTo(0);
         }),
     );
 
-    function scrollToSky() {
-        shared.navigating = true; // pas de blocage du scroll pendant le trajet
-        let finished = false;
-        const done = () => {
-            if (finished) return;
-            finished = true;
-            shared.navigating = false;
-            window.removeEventListener('scrollend', done);
-        };
-        window.addEventListener('scrollend', done);
-        setTimeout(done, 3000);
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
-    }
-
     // ============ COLLECTION : choix de la taille ============
-    // (boutons radio du formulaire de précommande : la taille choisie s'affiche dans la légende et le bouton)
+    // (boutons radio du formulaire de précommande : la taille choisie s'affiche dans la légende)
     document.querySelectorAll('[data-size-group]').forEach((group) => {
         const labels = document.querySelectorAll('[data-size-label]');
         group.addEventListener('change', (e) => {
@@ -188,18 +203,14 @@ document.addEventListener('DOMContentLoaded', () => {
             pos.impactX = ix - ax;
             pos.impactY = iy - ay;
             pos.followY = H * 0.14 - ay; // la goutte se recentre en haut de l'écran pendant la chute
-            puddle.setAttribute('cx', pos.impactX);
-            puddle.setAttribute('cy', pos.impactY - 2);
-            droplets.forEach((d) => {
-                d.setAttribute('cx', pos.impactX);
-                d.setAttribute('cy', pos.impactY - 4);
-            });
-            // Les 3 gouttes partent de l'éclaboussure et tombent jusque sous le bas de l'écran
-            falls.forEach((f) => {
-                f.setAttribute('cx', pos.impactX);
-                f.setAttribute('cy', pos.impactY - 2);
-            });
-            pos.fallY = H + 60 - ay - pos.impactY;
+            // Flaque, 3 gouttes qui tombent de l'épaule et gouttelettes de l'éclaboussure : toutes partent du point d'impact
+            [[[puddle, ...falls], 2], [droplets, 4]].forEach(([els, dy]) =>
+                els.forEach((el) => {
+                    el.setAttribute('cx', pos.impactX);
+                    el.setAttribute('cy', pos.impactY - dy);
+                }),
+            );
+            pos.fallY = H + 60 - ay - pos.impactY; // les 3 gouttes tombent jusque sous le bas de l'écran
             // Niveau du sol = semelle du coureur une fois la caméra descendue (zoom autour du bas de la scène)
             const soleY = runner.offsetTop + runner.offsetHeight * parseFloat(runner.dataset.shoeY);
             pos.groundY = H + (soleY - H) * CAM_SCALE - H * camLift() - 6;
@@ -418,6 +429,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ScrollTrigger.removeEventListener('refresh', onRefresh);
             window.removeEventListener('scroll', onScrollHold);
             unlock();
+            // la barre de progression repasse sur ses repères « sans animation »
+            Object.assign(shared, { stageST: null, detachAt: null, finishSeq: null, replaySeq: null });
         };
     });
 
@@ -515,8 +528,13 @@ document.addEventListener('DOMContentLoaded', () => {
     buildTerre();
     ScrollTrigger.addEventListener('refresh', buildTerre);
 
-    // Animation liée au scroll (sans mouvement réduit, les tracés restent affichés en entier)
+    const source = document.querySelector('[data-source]');
+    if (!source) return;
+
+    // ============ ANIMATIONS LIÉES AU SCROLL : 03 TERRE puis 04 SOURCE ============
+    // (sans mouvement réduit : tracés affichés en entier, bouteille droite et immobile)
     mm.add('(prefers-reduced-motion: no-preference)', () => {
+        // ---------- 03 — Terre : les 3 gouttes parcourent leurs tracés ----------
         const state = { p: 0 };
         const render = () => {
             paths.forEach((path, i) => {
@@ -546,21 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
         render();
         ScrollTrigger.addEventListener('refresh', render);
 
-        return () => {
-            ScrollTrigger.removeEventListener('refresh', render);
-            paths.forEach((p) => {
-                p.style.removeProperty('stroke-dasharray');
-                p.style.removeProperty('stroke-dashoffset');
-            });
-            cards.forEach((c) => c.removeAttribute('data-wet'));
-        };
-    });
-
-    // ============ 04 — SOURCE : la goutte réunie tombe dans la bouteille Quézac ============
-    const source = document.querySelector('[data-source]');
-    if (!source) return;
-
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
+        // ---------- 04 — Source : la goutte réunie tombe dans la bouteille Quézac ----------
         const sRoot = source.querySelector('[data-source-root]');
         const sBase = source.querySelector('[data-source-base]');
         const sNeck = source.querySelector('[data-source-neck]');
@@ -699,10 +703,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 .fromTo(bottle, { opacity: () => (isDesktop() ? 1 : 0.5) }, { opacity: 1, duration: 0.3, immediateRender: false }, 0);
         }
 
+        // Passage en mouvement réduit : tracés de la Terre affichés en entier, bouteille sans halo animé
         return () => {
-            shared.handoff = false;
+            ScrollTrigger.removeEventListener('refresh', render);
+            paths.forEach((p) => {
+                p.style.removeProperty('stroke-dasharray');
+                p.style.removeProperty('stroke-dashoffset');
+            });
+            cards.forEach((c) => c.removeAttribute('data-wet'));
             gsap.set(bottle, { clearProps: 'filter' });
+            Object.assign(shared, { handoff: false, renderTerre: null, terreST: null, sourceST: null, sourcePinST: null });
         };
+    });
+
+    // ============ APPARITION AU SCROLL : fondu des blocs de titres / textes de tout le site ============
+    // Il suffit d'ajouter l'attribut data-reveal sur un bloc HTML existant pour qu'il apparaisse au scroll.
+    // [data-reveal] : fondu + légère montée. [data-reveal="fade"] : fondu seul, pour les blocs de la Terre dont la
+    // position est mesurée pour dessiner les tracés (un décalage fausserait le calcul).
+    // Le Ciel et la Pluie ont déjà leur propre apparition dans la scène accrochée. Créé après les scènes :
+    // les positions tiennent compte de la section Source accrochée (pin).
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+        const blocks = gsap.utils.toArray('[data-reveal]');
+        if (!blocks.length) return;
+
+        const reveal = (batch) =>
+            gsap.to(batch, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power2.out', stagger: 0.12, overwrite: true });
+
+        gsap.set(blocks, { autoAlpha: 0, y: (i, el) => (el.dataset.reveal === 'fade' ? 0 : 40) });
+        ScrollTrigger.batch(blocks, {
+            start: 'clamp(top 85%)', // clamp : un bloc en bas de page (pied de page) apparaît quand même en fin de scroll
+            once: true,
+            onEnter: reveal,
+            onLeave: reveal, // page rechargée plus bas, ou saut direct par un lien : les blocs déjà dépassés restent visibles
+        });
+
+        // Passage en mouvement réduit : tout est affiché normalement
+        return () => gsap.set(blocks, { clearProps: 'opacity,visibility,transform' });
     });
 
     // ============ BARRE DE PROGRESSION : 5 étapes (01 Ciel → 02 Pluie → 03 Terre → 04 Source → 05 Recyclage) ============
@@ -767,32 +803,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Défilement doux jusqu'au début d'une étape
-    let scrollTween;
     const goToStep = (i) => {
         // 05 — Recyclage : on arrive sur le titre « De la bouteille au fil. » (après le pin de la Source)
         const target = i === stepEls.length - 1 ? Math.round(Math.max(marks[i], pageTop(recycle))) : Math.round(marks[i]) + (i ? 2 : 0);
-        scrollTween?.kill(); // un trajet précédent s'arrête (avant de repasser en navigation)
-        shared.navigating = true;
         if (i >= 2) shared.finishSeq?.(); // on va au-delà de la chute : séquence terminée d'office
-        const stop = () => scrollTween?.kill();
-        const done = () => {
-            shared.navigating = false;
-            ['wheel', 'touchstart', 'keydown'].forEach((ev) => window.removeEventListener(ev, stop));
-            if (i === 1) shared.replaySeq?.(); // « 02 — La pluie » depuis plus bas : la goutte retombe du nuage
-        };
-        // Défilement piloté par GSAP (le « smooth » natif est trop rapide et sa vitesse n'est pas réglable) :
-        // durée selon la distance, entre 1,2 s et 3 s ; l'utilisateur reprend la main s'il scrolle pendant le trajet
-        const pos = { y: window.scrollY };
-        const duration = gsap.utils.clamp(1.2, 3, Math.abs(target - pos.y) / 1200);
-        scrollTween = gsap.to(pos, {
-            y: target,
-            duration,
-            ease: 'power2.inOut',
-            onUpdate: () => window.scrollTo(0, pos.y),
-            onComplete: done,
-            onInterrupt: done,
-        });
-        ['wheel', 'touchstart', 'keydown'].forEach((ev) => window.addEventListener(ev, stop, { once: true, passive: true }));
+        // « 02 — La pluie » depuis plus bas : à l'arrivée, la goutte retombe du nuage
+        smoothScrollTo(target, i === 1 ? () => shared.replaySeq?.() : null);
     };
 
     // Étapes cliquables

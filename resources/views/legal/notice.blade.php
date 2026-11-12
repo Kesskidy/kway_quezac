@@ -4,7 +4,7 @@
 
 @section('content')
     <h2>Éditeur</h2>
-    <p>Projet étudiant fictif réalisé par Mathéo et Clément, sans but commercial.</p>
+    <p>Projet étudiant réalisé par Mathéo et Clément, sans but commercial.</p>
 
     <h2>Hébergement</h2>
     <p>Le site est présenté en démonstration et n’est pas hébergé publiquement.</p>
