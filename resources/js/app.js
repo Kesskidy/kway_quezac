@@ -1,5 +1,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { initGame } from './game/game';
+import { initRulesModal } from './rules-modal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -8,8 +10,25 @@ window.gsap = gsap;
 window.ScrollTrigger = ScrollTrigger;
 
 document.addEventListener('DOMContentLoaded', () => {
+    initGame(); // jeu concours (#game) : en premier, indépendant des scènes animées plus bas
+    initRulesModal(); // règlement du jeu en modale
     const mm = gsap.matchMedia();
     // Partagé entre la scène accrochée et la section Terre : hauteur des flaques par rapport au bas de la scène
+    // Mise en page desktop (lg = 64rem) : en dessous, version mobile/tablette des scènes
+    const isDesktop = () => window.matchMedia('(min-width: 64rem)').matches;
+    // Inclinaison de la bouteille de la Source : 30° (« / ») sur mobile avec animations, droite sinon
+    const bottleTilt = () => (isDesktop() || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 30);
+    // Position d'un élément dans un ancêtre, sans tenir compte des transforms (animations GSAP, pin)
+    const offsetIn = (el, anc) => {
+        let x = 0;
+        let y = 0;
+        while (el && el !== anc) {
+            x += el.offsetLeft;
+            y += el.offsetTop;
+            el = el.offsetParent;
+        }
+        return { x, y };
+    };
     const shared = { navigating: false, finishSeq: null, replaySeq: null, poolOffset: null, handoff: false, renderTerre: null, stageST: null, detachAt: null, terreST: null, sourceST: null, sourcePinST: null };
 
     // ============ MENU MOBILE (burger) ============
@@ -71,14 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ============ COLLECTION : choix de la taille ============
+    // (boutons radio du formulaire de précommande : la taille choisie s'affiche dans la légende et le bouton)
     document.querySelectorAll('[data-size-group]').forEach((group) => {
-        const buttons = group.querySelectorAll('button');
         const labels = document.querySelectorAll('[data-size-label]');
-        buttons.forEach((btn) => {
-            btn.addEventListener('click', () => {
-                buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-                labels.forEach((l) => (l.textContent = btn.textContent.trim()));
-            });
+        group.addEventListener('change', (e) => {
+            if (e.target.name === 'size') labels.forEach((l) => (l.textContent = e.target.value));
         });
     });
 
@@ -119,6 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const runnerText = q('[data-runner-text]');
         const runnerAside = q('[data-runner-aside]');
         const runnerUi = q('[data-runner-ui]');
+        const runnerBg = q('[data-runner-bg]'); // fond forêt (parallaxe pendant la descente)
+        const groundFade = q('[data-ground-fade]'); // fondu forêt → sol
+        const runnerVignette = gsap.utils.toArray(stage.querySelectorAll('[data-runner-vignette]')); // vignette + assombrissement sous le texte
         const cam = q('[data-runner-cam]');
         const ground = q('[data-ground]');
         const pools = gsap.utils.toArray(stage.querySelectorAll('[data-ground-pool]')); // les gouttes posées sur le sol
@@ -146,7 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const DESCENT = 1.0; // la caméra descend vers le sol
         const SEEP = 0.6; // les 3 gouttes s'infiltrent dans le sol
         const CAM_SCALE = 1.25; // léger zoom pendant la descente
-        const CAM_LIFT = 0.45; // la scène remonte de 45 % d'écran (= la caméra descend)
+        // la scène remonte de 45 % d'écran (= la caméra descend) ; sur mobile 20 % seulement :
+        // le sol reste bas dans l'écran → peu de vide entre les flaques et la section Terre
+        const camLift = () => (isDesktop() ? 0.45 : 0.2);
         const FALL_DX = [-26, -4, 18]; // glissement de chaque goutte sur l'épaule avant de tomber
 
         // Positions calculées (recalculées au resize)
@@ -181,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pos.fallY = H + 60 - ay - pos.impactY;
             // Niveau du sol = semelle du coureur une fois la caméra descendue (zoom autour du bas de la scène)
             const soleY = runner.offsetTop + runner.offsetHeight * parseFloat(runner.dataset.shoeY);
-            pos.groundY = H + (soleY - H) * CAM_SCALE - H * CAM_LIFT - 6;
+            pos.groundY = H + (soleY - H) * CAM_SCALE - H * camLift() - 6;
             // Les flaques sont là où les gouttes sont tombées
             pools.forEach((p, i) => {
                 p.style.left = `${ax + pos.impactX + FALL_DX[i]}px`;
@@ -194,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gsap.set(scene2, { autoAlpha: 0 });
         gsap.set(runnerText, { autoAlpha: 0, x: -60 });
         gsap.set(runnerAside, { autoAlpha: 0, x: 60 });
+        gsap.set(runnerVignette, { opacity: 0 });
         gsap.set([drop, shine], { svgOrigin: '0 0' }); // déformations autour du centre de la goutte
 
         // ============ PARTIE LIÉE AU SCROLL (scène accrochée) ============
@@ -242,8 +264,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // 02 → 03 — la caméra descend vers le sol : la scène remonte et grossit, le sol apparaît sous les pieds
         const Z = HERO + STRETCH + HOLD;
         tl.to(runnerUi, { opacity: 0, x: -30, duration: DESCENT * 0.4 }, Z)
-            .to(cam, { scale: CAM_SCALE, y: () => -stage.offsetHeight * CAM_LIFT, transformOrigin: '50% 100%', ease: 'power2.inOut', duration: DESCENT }, Z)
+            .to(cam, { scale: CAM_SCALE, y: () => -stage.offsetHeight * camLift(), transformOrigin: '50% 100%', ease: 'power2.inOut', duration: DESCENT }, Z)
             .fromTo(ground, { y: 0 }, { y: () => pos.groundY - stage.offsetHeight, ease: 'power2.inOut', duration: DESCENT }, Z);
+        // Parallaxe : la forêt (au loin) remonte moins vite que le sol ; son bas reste caché sous le sol.
+        // Un fondu bleu nuit apparaît au-dessus de la ligne du sol : pas de coupure nette forêt / sol
+        if (runnerBg) tl.fromTo(runnerBg, { y: 0 }, { y: () => (pos.groundY - stage.offsetHeight) * 0.4, ease: 'power2.inOut', duration: DESCENT }, Z);
+        if (groundFade) tl.fromTo(groundFade, { opacity: 0 }, { opacity: 1, ease: 'power1.inOut', duration: DESCENT * 0.6 }, Z);
 
         // les 3 gouttes tombées sur le sol s'infiltrent, l'une après l'autre
         const S = Z + DESCENT;
@@ -279,6 +305,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // le texte arrive depuis la gauche, l'encart « Déperlant » depuis la droite
             .to(runnerText, { autoAlpha: 1, x: 0, duration: 0.7, ease: 'power2.out' }, IMPACT + 0.3)
             .to(runnerAside, { autoAlpha: 1, x: 0, duration: 0.7, ease: 'power2.out' }, IMPACT + 0.45);
+        // la vignette du fond se pose progressivement dès que la goutte se détache, pendant toute sa chute jusqu'à l'impact
+        seq.to(runnerVignette, { opacity: 1, duration: IMPACT, ease: 'power1.inOut' }, 0);
 
         // couronne de gouttelettes projetées en arc (rayon ≥ 6 px : en dessous, le filtre gooey efface la forme)
         droplets.forEach((d, i) => {
@@ -430,8 +458,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const buildTerre = () => {
         const box = terre.getBoundingClientRect();
         const W = box.width;
-        // point commun = tout en bas de la section : quand la Source se verrouille, il est pile en haut de l'écran
-        const end = { x: W / 2, y: box.height };
+        // point commun = tout en bas de la section : quand la Source se verrouille, il est pile en haut de l'écran.
+        // Horizontalement : au-dessus du goulot de la bouteille de la Source (même largeur que Terre) ;
+        // sur mobile elle est inclinée, le goulot part à droite de son centre
+        const srcBottle = document.querySelector('[data-bottle]');
+        const srcSection = document.querySelector('[data-source]');
+        let endX = W / 2;
+        if (srcBottle && srcSection) {
+            const centerX = offsetIn(srcBottle, srcSection).x + srcBottle.offsetWidth / 2;
+            endX = centerX + (0.5 - parseFloat(srcBottle.dataset.mouthY)) * srcBottle.offsetHeight * Math.sin((bottleTilt() * Math.PI) / 180);
+        }
+        const end = { x: endX, y: box.height };
         // Départs : là où les 3 gouttes se sont infiltrées dans le sol (scène précédente)
         const pools = gsap.utils.toArray(document.querySelectorAll('[data-ground-pool]'));
         // Les tracés descendent d'abord sous le titre de la section pour ne pas le traverser
@@ -535,16 +572,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const sp = { x: 0, y0: 0, mx: 0, my: 0 };
         const GLOW = 'drop-shadow(0 0 45px rgba(85,136,184,0.65)) brightness(1)';
 
-        // Départ = point commun de la section Terre ; arrivée = ouverture du goulot
+        // Mobile : bouteille inclinée en diagonale « / » (rotation GSAP autour de son centre, redressée en partant vers le Recyclage)
+        const tilt = bottleTilt;
+        let glideTl = null; // trajet de la bouteille vers le Recyclage (créé plus bas)
+
+        // Départ = point commun de la section Terre ; arrivée = ouverture du goulot (une fois la bouteille inclinée)
         const layoutSource = () => {
             const sb = source.getBoundingClientRect();
             const tb = terre.getBoundingClientRect();
-            const br = bottle.getBoundingClientRect();
+            const bo = offsetIn(bottle, source);
             sp.x = parseFloat(endDot.getAttribute('cx')) + tb.left - sb.left;
             sp.y0 = parseFloat(endDot.getAttribute('cy')) + tb.top - sb.top; // au-dessus de la section (valeur négative)
-            sp.mx = br.left - sb.left + br.width * parseFloat(bottle.dataset.mouthX);
-            sp.my = br.top - sb.top + br.height * parseFloat(bottle.dataset.mouthY);
+            // goulot = point de l'image tourné de « tilt » degrés autour du centre de la bouteille
+            const w = bottle.offsetWidth;
+            const h = bottle.offsetHeight;
+            const dx = w * parseFloat(bottle.dataset.mouthX) - w / 2;
+            const dy = h * parseFloat(bottle.dataset.mouthY) - h / 2;
+            const a = (tilt() * Math.PI) / 180;
+            sp.mx = bo.x + w / 2 + dx * Math.cos(a) - dy * Math.sin(a);
+            sp.my = bo.y + h / 2 + dx * Math.sin(a) + dy * Math.cos(a);
             sRoot.setAttribute('transform', `translate(${sp.x} ${sp.y0})`);
+            // bouteille encore dans la Source : on (ré)applique l'inclinaison (changement mobile ↔ desktop)
+            if (!glideTl || glideTl.progress() === 0) gsap.set(bottle, { rotation: tilt() });
         };
         layoutSource();
 
@@ -609,17 +658,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const recycleSec = document.querySelector('#recyclage');
         const collectBottle = recycleSec?.querySelector('[data-collect-bottle]');
         if (collectBottle) {
-            // Position dans un ancêtre, sans tenir compte des transforms (ni de la bouteille, ni du pin)
-            const offsetIn = (el, anc) => {
-                let x = 0;
-                let y = 0;
-                while (el && el !== anc) {
-                    x += el.offsetLeft;
-                    y += el.offsetTop;
-                    el = el.offsetParent;
-                }
-                return { x, y };
-            };
             const glide = { x: 0, y: 0, scale: 1 };
             // Au décrochage, la Source est en haut de l'écran et le Recyclage commence juste sous elle :
             // l'écart bouteille → bouteille de la Collecte est alors fixe (les deux défilent ensemble)
@@ -637,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             gsap.set(collectBottle, { autoAlpha: 0 }); // remplacée par la bouteille qui arrive (rétablie sans animations)
 
-            gsap.timeline({
+            glideTl = gsap.timeline({
                 defaults: { ease: 'none' },
                 scrollTrigger: {
                     trigger: collectBottle,
@@ -654,8 +692,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     0,
                 )
                 // elle bascule en glissant, puis se redresse pour se poser droite
-                .fromTo(bottle, { rotation: 0 }, { rotation: 20, ease: 'sine.out', duration: 0.5, immediateRender: false }, 0)
-                .to(bottle, { rotation: 0, ease: 'sine.inOut', duration: 0.5 }, 0.5);
+                // (départ = inclinaison de la Source : 0° en desktop, 30° en mobile — appliquée dès le chargement)
+                .fromTo(bottle, { rotation: () => tilt() }, { rotation: 20, ease: 'sine.out', duration: 0.5, immediateRender: true }, 0)
+                .to(bottle, { rotation: 0, ease: 'sine.inOut', duration: 0.5 }, 0.5)
+                // mobile : la bouteille, estompée derrière le texte de la Source (opacity-50), redevient pleine en partant
+                .fromTo(bottle, { opacity: () => (isDesktop() ? 1 : 0.5) }, { opacity: 1, duration: 0.3, immediateRender: false }, 0);
         }
 
         return () => {
