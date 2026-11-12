@@ -20,5 +20,10 @@ class DatabaseSeeder extends Seeder
             PromoCodeSeeder::class,
             ProductSeeder::class,
         ]);
+
+        // Fake participations for the demo of /admin/participations and lottery:draw.
+        if (app()->environment('local')) {
+            $this->call(DemoParticipationSeeder::class);
+        }
     }
 }
