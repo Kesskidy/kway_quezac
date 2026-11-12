@@ -2,16 +2,17 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>{{ $title ?? 'Mon Application' }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $title ?? 'RE·SOURCE — La collection K-Way × Quézac' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-    <nav><!-- barre de navigation --></nav>
+<body class="relative bg-nuit text-white antialiased">
+    <x-nav />
 
     <main>
-        {{ $slot }} <!-- Le contenu de la page -->
+        {{ $slot }}
     </main>
 
-    <footer><!--  pied de page --></footer>
+    <x-footer />
 </body>
 </html>
