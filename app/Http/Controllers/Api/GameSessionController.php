@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StartGameRequest;
 use App\Http\Requests\StoreParticipationRequest;
 use App\Http\Resources\GameSessionResource;
+use App\Mail\ParticipationConfirmed;
 use App\Models\GameSession;
 use App\Models\PromoCode;
 use App\Services\Game\GameDraw;
@@ -13,6 +14,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class GameSessionController extends Controller
@@ -51,7 +53,7 @@ class GameSessionController extends Controller
     public function participation(StoreParticipationRequest $request, GameSession $gameSession): JsonResponse
     {
         try {
-            DB::transaction(function () use ($request, $gameSession) {
+            $participation = DB::transaction(function () use ($request, $gameSession) {
                 // Lock the game so two simultaneous calls cannot both register a participation.
                 $gameSession = GameSession::whereKey($gameSession->getKey())->lockForUpdate()->firstOrFail();
 
@@ -59,7 +61,7 @@ class GameSessionController extends Controller
                     throw new HttpResponseException($this->participationAlreadyRegistered());
                 }
 
-                $gameSession->participation()->create([
+                return $gameSession->participation()->create([
                     'first_name' => $request->validated('first_name'),
                     'email' => $request->validated('email'),
                     'consented_at' => now(),
@@ -69,6 +71,9 @@ class GameSessionController extends Controller
             // Safety net: game_session_id is unique in the database.
             return $this->participationAlreadyRegistered();
         }
+
+        // Sent after the commit, so a participation is never confirmed if it was not saved.
+        Mail::to($participation->email)->send(new ParticipationConfirmed($participation));
 
         return response()->json([
             'data' => ['message' => "C'est noté ! Ta participation au tirage des lots est enregistrée."],
