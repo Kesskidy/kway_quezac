@@ -18,20 +18,18 @@ class GameSessionFactory extends Factory
     {
         return [
             'promo_code_id' => PromoCode::factory()->used(),
-            'course' => [
-                'phases' => [['type' => 'rain', 'start_tick' => 0, 'end_tick' => 100]],
-                'trees' => [['start' => 50, 'end' => 80]],
-            ],
+            'won' => false,
+            'scenario' => 0,
         ];
     }
 
-    public function started(): static
+    public function won(int $scenario = 0): static
     {
-        return $this->state(fn () => ['started_at' => now()]);
+        return $this->state(fn () => ['won' => true, 'scenario' => $scenario]);
     }
 
-    public function finished(): static
+    public function lost(int $scenario = 0): static
     {
-        return $this->state(fn () => ['started_at' => now()->subMinute(), 'finished_at' => now()]);
+        return $this->state(fn () => ['won' => false, 'scenario' => $scenario]);
     }
 }

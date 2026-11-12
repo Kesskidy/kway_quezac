@@ -13,12 +13,14 @@ class GameSessionResource extends JsonResource
     /**
      * Response of POST /api/game-sessions (regle.md, section 4.1).
      *
-     * @return array<string, mixed>
+     * @return array{token: string, won: bool, scenario: int}
      */
     public function toArray(Request $request): array
     {
         return [
             'token' => $this->token,
+            'won' => $this->won,
+            'scenario' => $this->scenario,
         ];
     }
 }
