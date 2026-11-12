@@ -6,13 +6,13 @@
                     <img src="{{ asset('images/logo-resource-source.png') }}" alt="RE·SOURCE by K-Way × Quézac — accueil" width="3330" height="469" class="h-10 w-auto">
                 </a>
                 <p class="mt-5 font-serif text-2xl leading-tight font-bold">Eau, bouteille, plastique recyclé, K-Way : un seul cycle.</p>
-                <div class="mt-6 flex flex-wrap items-center gap-6">
-                    <a href="{{ route('landing') }}#histoire" class="inline-flex items-center rounded-xl bg-white px-4 py-2.5">
-                        <img src="{{ asset('images/logo-kway.png') }}" alt="K-Way" width="405" height="79" class="h-8 w-auto">
+                <div class="mt-6 flex flex-wrap items-center gap-6 max-lg:gap-4">
+                    <a href="{{ route('landing') }}#histoire" class="inline-flex items-center rounded-xl bg-white px-4 py-2.5 max-lg:rounded-lg max-lg:px-3 max-lg:py-2">
+                        <img src="{{ asset('images/logo-kway.png') }}" alt="K-Way" width="405" height="79" class="h-8 w-auto max-lg:h-5">
                     </a>
-                    <span class="text-xl text-white/60" aria-hidden="true">×</span>
+                    <span class="text-xl text-white/60 max-lg:text-base" aria-hidden="true">×</span>
                     <a href="{{ route('landing') }}#histoire" class="inline-flex items-center">
-                        <img src="{{ asset('images/logo-quezac.png') }}" alt="Quézac depuis 1901" width="395" height="161" class="h-14 w-auto">
+                        <img src="{{ asset('images/logo-quezac.png') }}" alt="Quézac depuis 1901" width="395" height="161" class="h-14 w-auto max-lg:h-9">
                     </a>
                 </div>
             </div>
