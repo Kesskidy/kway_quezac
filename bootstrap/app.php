@@ -19,30 +19,15 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
-        );
+        $exceptions->shouldRenderJsonWhen(fn (Request $request) => $request->is('api/*') || $request->expectsJson());
 
-        // French messages for the game API (regle.md, section 4.3).
-        $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
-            if ($request->is('api/*')) {
-                return response()->json(['message' => $e->getMessage()], 403);
-            }
-        });
+        // API errors in French and as plain JSON (regle.md §4.3), even in debug mode.
+        $exceptions->render(fn (AccessDeniedHttpException $e, Request $request) => $request->is('api/*')
+            ? response()->json(['message' => $e->getMessage()], 403) : null);
 
-        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
-            if ($request->is('api/game-sessions/*')) {
-                return response()->json(['message' => 'Partie introuvable.'], 404);
-            }
-        });
+        $exceptions->render(fn (NotFoundHttpException $e, Request $request) => $request->is('api/*')
+            ? response()->json(['message' => 'Partie introuvable.'], 404) : null);
 
-        $exceptions->render(function (ThrottleRequestsException $e, Request $request) {
-            if ($request->is('api/*')) {
-                return response()->json(
-                    ['message' => 'Trop d’essais. Réessaie dans une minute.'],
-                    429,
-                    $e->getHeaders(),
-                );
-            }
-        });
+        $exceptions->render(fn (ThrottleRequestsException $e, Request $request) => $request->is('api/*')
+            ? response()->json(['message' => 'Trop d’essais. Réessaie dans une minute.'], 429, $e->getHeaders()) : null);
     })->create();

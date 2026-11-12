@@ -10,28 +10,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class GameSession extends Model
 {
-    /** @use HasFactory<\Database\Factories\GameSessionFactory> */
     use HasFactory, HasUlids;
 
-    protected $fillable = [
-        'promo_code_id',
-        'won',
-        'scenario',
-    ];
+    protected $fillable = ['promo_code_id', 'won', 'scenario'];
 
     protected function casts(): array
     {
-        return [
-            'won' => 'boolean',
-            'scenario' => 'integer',
-        ];
+        return ['won' => 'boolean', 'scenario' => 'integer'];
     }
 
-    /**
-     * The ULID goes in `token`; `id` stays an auto-increment integer.
-     *
-     * @return list<string>
-     */
+    // The ULID goes in `token` (used in the URLs); `id` stays an auto-increment integer.
     public function uniqueIds(): array
     {
         return ['token'];
@@ -42,17 +30,11 @@ class GameSession extends Model
         return 'token';
     }
 
-    /**
-     * @return BelongsTo<PromoCode, $this>
-     */
     public function promoCode(): BelongsTo
     {
         return $this->belongsTo(PromoCode::class);
     }
 
-    /**
-     * @return HasOne<Participation, $this>
-     */
     public function participation(): HasOne
     {
         return $this->hasOne(Participation::class);
