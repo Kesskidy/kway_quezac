@@ -33,7 +33,7 @@ class LotteryWon extends Mailable
                 'firstName' => $this->participation->first_name,
                 'prizeRank' => $this->participation->prize_rank,
                 'prize' => config('game.prizes')[$this->participation->prize_rank],
-                'rulesUrl' => url('/reglement'),
+                'rulesUrl' => route('legal.rules'),
             ],
         );
     }

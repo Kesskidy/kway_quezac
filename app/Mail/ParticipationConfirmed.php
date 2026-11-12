@@ -31,7 +31,7 @@ class ParticipationConfirmed extends Mailable
             markdown: 'mail.participation-confirmed',
             with: [
                 'firstName' => $this->participation->first_name,
-                'rulesUrl' => url('/reglement'),
+                'rulesUrl' => route('legal.rules'),
             ],
         );
     }
