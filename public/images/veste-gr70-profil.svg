@@ -57,20 +57,37 @@
     <rect x="246" y="152" width="8" height="12" rx="3" fill="#9A9488"/>
   </g>
 
-  <!-- Bras avant : pivote à l'épaule (transform-origin: 205px 150px) pour couvrir la bouteille -->
+  <!--
+    Bras avant articulé :
+      #kway-arm-front    haut du bras, pivote à l'épaule (svgOrigin 205 150)
+      #kway-forearm      avant-bras (emboîté), pivote au coude (svgOrigin 203 226)
+    Pose « main sur le goulot » (bouteille-dos.svg, goulot en 128 118) :
+      #kway-arm-front rotation -157,  #kway-forearm rotation -118
+  -->
   <g id="kway-arm-front" data-pivot="205 150">
-    <path d="M188,138 C176,150 172,172 176,198 L188,268 C190,284 196,296 204,304 L234,300 C232,282 228,262 226,240 L224,190 C226,164 220,146 208,138 C202,135 194,135 188,138 Z" fill="url(#kway-sleeve)" stroke="#051530" stroke-width="2" stroke-linejoin="round"/>
+    <clipPath id="kway-upperarm-clip">
+      <path d="M188,138 C176,150 172,172 176,198 L180,226 C182,240 222,242 225,228 L224,190 C226,164 220,146 208,138 C202,135 194,135 188,138 Z"/>
+    </clipPath>
+    <clipPath id="kway-forearm-clip">
+      <path d="M181,224 C181,210 225,210 225,224 L226,240 C228,262 232,282 234,300 L204,304 C196,296 190,284 188,268 L181,228 Z"/>
+    </clipPath>
+
+    <!-- Avant-bras : dessiné en premier pour passer sous le coude du haut du bras -->
+    <g id="kway-forearm" data-pivot="203 226">
+      <path d="M181,224 C181,210 225,210 225,224 L226,240 C228,262 232,282 234,300 L204,304 C196,296 190,284 188,268 L181,228 Z" fill="url(#kway-sleeve)" stroke="#051530" stroke-width="2" stroke-linejoin="round"/>
+      <!-- Relief du GR70, partie basse -->
+      <path id="kway-gr70-relief-low" clip-path="url(#kway-forearm-clip)" d="M190,228 L197,244 L192,258 L199,272 L195,286 L202,298" fill="none" stroke="#BB7333" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <text transform="translate(213 274) rotate(-80)" font-family="Fraunces, Georgia, 'Times New Roman', serif" font-size="14" letter-spacing="1" fill="#D08A4B">GR70</text>
+      <!-- Poignet élastiqué -->
+      <path id="kway-cuff" d="M203,300 L235,296 L237,318 C237,320 236,322 234,322 L208,325 C206,325 205,324 205,322 Z" fill="#08234A"/>
+      <path d="M207,312 L234,309" stroke="#123C72" stroke-width="2" stroke-dasharray="3 4"/>
+    </g>
+
+    <!-- Haut du bras -->
+    <path d="M188,138 C176,150 172,172 176,198 L180,226 C182,240 222,242 225,228 L224,190 C226,164 220,146 208,138 C202,135 194,135 188,138 Z" fill="url(#kway-sleeve)" stroke="#051530" stroke-width="2" stroke-linejoin="round"/>
     <!-- Couture raglan -->
     <path d="M196,137 C186,154 182,176 184,200" fill="none" stroke="#051530" stroke-width="1.5" opacity="0.7"/>
-    <!-- Lames bronze sur la manche : même sens que le dos, découpées à la forme de la manche -->
-    <clipPath id="kway-sleeve-clip">
-      <path d="M188,138 C176,150 172,172 176,198 L188,268 C190,284 196,296 204,304 L234,300 C232,282 228,262 226,240 L224,190 C226,164 220,146 208,138 C202,135 194,135 188,138 Z"/>
-    </clipPath>
-    <!-- Relief du GR70 brodé -->
-    <path id="kway-gr70-relief" clip-path="url(#kway-sleeve-clip)" d="M190,150 L194,162 L188,174 L195,188 L189,202 L196,216 L190,230 L197,244 L192,258 L199,272 L195,286 L202,298" fill="none" stroke="#BB7333" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-    <text transform="translate(213 274) rotate(-80)" font-family="Fraunces, Georgia, 'Times New Roman', serif" font-size="14" letter-spacing="1" fill="#D08A4B">GR70</text>
-    <!-- Poignet élastiqué -->
-    <path id="kway-cuff" d="M203,300 L235,296 L237,318 C237,320 236,322 234,322 L208,325 C206,325 205,324 205,322 Z" fill="#08234A"/>
-    <path d="M207,312 L234,309" stroke="#123C72" stroke-width="2" stroke-dasharray="3 4"/>
+    <!-- Relief du GR70, partie haute -->
+    <path id="kway-gr70-relief-high" clip-path="url(#kway-upperarm-clip)" d="M190,150 L194,162 L188,174 L195,188 L189,202 L196,216 L190,230" fill="none" stroke="#BB7333" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
   </g>
 </svg>

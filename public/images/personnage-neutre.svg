@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="400" height="560" id="hiker">
+  <title>Randonneur neutre, sans visage, vue de profil, jambes articulées</title>
+  <!--
+    Même repère que veste-gr70-profil.svg : les deux se superposent exactement.
+    Ordre des calques : #hiker-leg-back, #hiker-leg-front, la veste (avec #hiker-hand dans #kway-arm-front), puis #hiker-head.
+
+    Jambes articulées (groupes emboîtés), pose de repos jambes droites :
+      #hiker-leg-*        cuisse,  pivot hanche   (svgOrigin)
+      #hiker-shin-*       mollet,  pivot genou
+      #hiker-foot-*       pied,    pivot cheville
+    Jambe arrière : hanche 193 400, genou 193 468, cheville 193 532
+    Jambe avant   : hanche 209 400, genou 209 468, cheville 209 532
+    Rotation positive = vers l'arrière (le personnage regarde à droite).
+  -->
+  <defs>
+    <clipPath id="hiker-head-clip">
+      <path d="M246,52 C268,62 274,96 256,126 C242,116 236,84 246,52 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Jambe arrière -->
+  <g id="hiker-leg-back" data-pivot="193 400">
+    <path d="M178,392 H208 L207,468 C207,476 200,481 193,481 C186,481 179,476 179,468 Z" fill="#161B27"/>
+    <g id="hiker-shin-back" data-pivot="193 468">
+      <path d="M180,466 C180,459 186,455 193,455 C200,455 206,459 206,466 L203,534 H183 Z" fill="#161B27"/>
+      <g id="hiker-foot-back" data-pivot="193 532">
+        <path d="M181,528 C181,522 187,520 193,520 L210,522 C220,523 225,530 225,538 V542 H181 Z" fill="#E9E4DA"/>
+        <rect x="179" y="540" width="48" height="7" rx="3" fill="#BDB6AA"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Jambe avant -->
+  <g id="hiker-leg-front" data-pivot="209 400">
+    <path d="M194,392 H224 L223,468 C223,476 216,481 209,481 C202,481 195,476 195,468 Z" fill="#232A3A"/>
+    <g id="hiker-shin-front" data-pivot="209 468">
+      <path d="M196,466 C196,459 202,455 209,455 C216,455 222,459 222,466 L219,534 H199 Z" fill="#232A3A"/>
+      <g id="hiker-foot-front" data-pivot="209 532">
+        <path d="M197,528 C197,522 203,520 209,520 L226,522 C236,523 241,530 241,538 V542 H197 Z" fill="#E9E4DA"/>
+        <rect x="195" y="540" width="48" height="7" rx="3" fill="#BDB6AA"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Tête : neutre, sans visage, visible seulement dans l'ouverture de la capuche -->
+  <g id="hiker-head" clip-path="url(#hiker-head-clip)">
+    <ellipse cx="258" cy="92" rx="20" ry="36" fill="#D8CFC2"/>
+    <ellipse cx="250" cy="96" rx="9" ry="30" fill="#C5BBAD" opacity="0.7"/>
+  </g>
+
+  <!-- Main : neutre, en moufle simple, à placer dans #kway-arm-front -->
+  <g id="hiker-hand">
+    <path d="M209,322 C206,332 208,344 216,348 C224,352 234,348 236,340 C238,332 236,324 234,318 Z" fill="#D8CFC2"/>
+    <path d="M233,322 C240,324 242,332 238,338" fill="none" stroke="#C5BBAD" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>
