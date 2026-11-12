@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\ParticipationController;
+use App\Http\Controllers\LandingController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('app');
-});
+// Pages (regle.md, section 3).
+Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 
 // Administration (regle.md, section 3): admin account created by AdminUserSeeder.
 Route::middleware('auth.basic')->prefix('admin')->name('admin.')->group(function () {
