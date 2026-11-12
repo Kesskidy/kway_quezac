@@ -402,7 +402,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const buildTerre = () => {
         const box = terre.getBoundingClientRect();
         const W = box.width;
-        const end = { x: W / 2, y: box.height - 80 }; // point commun, en bas de la section
+        // point commun = tout en bas de la section : quand la Source se verrouille, il est pile en haut de l'écran
+        const end = { x: W / 2, y: box.height };
         // Départs : là où les 3 gouttes se sont infiltrées dans le sol (scène précédente)
         const pools = gsap.utils.toArray(document.querySelectorAll('[data-ground-pool]'));
         // Les tracés descendent d'abord sous le titre de la section pour ne pas le traverser
@@ -522,6 +523,17 @@ document.addEventListener('DOMContentLoaded', () => {
         gsap.set(bottle, { filter: GLOW });
         gsap.set([sDrop, sShine], { svgOrigin: '0 0' }); // déformations autour du centre de la goutte
 
+        // La section reste accrochée un moment une fois en haut de l'écran : la goutte tombe pendant ce verrouillage,
+        // puis on profite de la bouteille illuminée (créé avant la timeline : sa fin dépend du début du pin)
+        shared.sourcePinST = ScrollTrigger.create({
+            trigger: source,
+            start: 'top top',
+            end: '+=60%',
+            pin: true,
+            anticipatePin: 1,
+        });
+        const FALL_SCROLL = 0.4; // part de la hauteur d'écran (pendant le pin) consacrée à la chute
+
         const sourceTl = gsap.timeline({
             defaults: { ease: 'none' },
             // dès que la goutte de la bouteille existe, la section Terre masque ses 3 gouttes et son point commun
@@ -535,39 +547,33 @@ document.addEventListener('DOMContentLoaded', () => {
             scrollTrigger: {
                 trigger: source,
                 start: 'top 80%', // = fin de la section Terre (les 3 gouttes viennent de se rejoindre)
-                end: () => `top+=${sp.my} 30%`, // le goulot arrive dans le tiers haut de l'écran
+                end: () => shared.sourcePinST.start + window.innerHeight * FALL_SCROLL, // la chute se joue pendant le verrouillage
                 scrub: 0.5,
                 invalidateOnRefresh: true,
                 onRefresh: layoutSource,
             },
-        })
+        });
+        // Échelle de temps = défilement en hauteurs d'écran : 0 → 0.8 avant le pin (top 80% → top top), 0.8 → 1.2 pendant le pin
+        const LOCK = 0.8;
+        sourceTl
             // l'eau réunie prend le relais du point commun de la section Terre
             .set(sBase, { attr: { r: 12 } }, 0)
-            // Phase 1 — étirement : la goutte gonfle, s'allonge, le filet s'amincit jusqu'à se pincer (comme sous le nuage)
-            .fromTo(sNeck, { attr: { rx: 0, ry: 0, cy: 0 }, opacity: 1 }, { attr: { rx: 9, ry: 4, cy: 4 }, duration: 0.1 }, 0)
-            .fromTo(sDrop, { attr: { r: 0 }, x: 0, y: 0, scaleX: 1, scaleY: 1, opacity: 1 }, { attr: { r: SR }, y: 8, duration: 0.1 }, 0)
-            .fromTo(sShine, { opacity: 0, x: 0, y: 0, scaleX: 1, scaleY: 1 }, { opacity: 0.8, y: 8, duration: 0.1 }, 0)
-            .to(sNeck, { attr: { rx: 2.6, ry: S_STRETCH / 2, cy: S_STRETCH / 2 }, duration: 0.2 }, 0.1)
-            .to([sDrop, sShine], { y: S_STRETCH, scaleY: 1.25, scaleX: 0.9, ease: 'power1.in', duration: 0.2 }, 0.1)
-            // rupture : le filet disparaît, le reste de l'eau se résorbe
-            .to(sNeck, { opacity: 0, duration: 0.02 }, 0.3)
-            .to(sBase, { attr: { r: 0 }, duration: 0.1 }, 0.3)
+            // Phase 1 — étirement : la goutte gonfle, s'allonge, le filet s'amincit, la goutte reste suspendue jusqu'au verrouillage
+            .fromTo(sNeck, { attr: { rx: 0, ry: 0, cy: 0 }, opacity: 1 }, { attr: { rx: 9, ry: 4, cy: 4 }, duration: 0.2 }, 0)
+            .fromTo(sDrop, { attr: { r: 0 }, x: 0, y: 0, scaleX: 1, scaleY: 1, opacity: 1 }, { attr: { r: SR }, y: 8, duration: 0.2 }, 0)
+            .fromTo(sShine, { opacity: 0, x: 0, y: 0, scaleX: 1, scaleY: 1 }, { opacity: 0.8, y: 8, duration: 0.2 }, 0)
+            .to(sNeck, { attr: { rx: 2.6, ry: S_STRETCH / 2, cy: S_STRETCH / 2 }, duration: LOCK - 0.2 }, 0.2)
+            .to([sDrop, sShine], { y: S_STRETCH, scaleY: 1.25, scaleX: 0.9, ease: 'power1.in', duration: LOCK - 0.2 }, 0.2)
+            // rupture (section verrouillée) : le filet disparaît, le reste de l'eau se résorbe
+            .to(sNeck, { opacity: 0, duration: 0.02 }, LOCK)
+            .to(sBase, { attr: { r: 0 }, duration: 0.05 }, LOCK)
             // Phase 2 — chute libre accélérée (gravité) jusqu'au goulot, la goutte s'allonge avec la vitesse
-            .to([sDrop, sShine], { x: () => sp.mx - sp.x, y: () => sp.my - sp.y0 + 8, scaleY: 1.4, scaleX: 0.82, ease: 'power2.in', duration: 0.6 }, 0.3)
+            .to([sDrop, sShine], { x: () => sp.mx - sp.x, y: () => sp.my - sp.y0 + 8, scaleY: 1.4, scaleX: 0.82, ease: 'power2.in', duration: 0.32 }, LOCK)
             // …et entre dans le goulot : la bouteille s'illumine
-            .to([sDrop, sShine], { opacity: 0, duration: 0.05 }, 0.9)
-            .to(bottle, { filter: 'drop-shadow(0 0 80px rgba(85,136,184,0.95)) brightness(1.25)', duration: 0.05 }, 0.9)
-            .to(bottle, { filter: GLOW, duration: 0.1 }, 0.95);
+            .to([sDrop, sShine], { opacity: 0, duration: 0.03 }, LOCK + 0.32)
+            .to(bottle, { filter: 'drop-shadow(0 0 80px rgba(85,136,184,0.95)) brightness(1.25)', duration: 0.03 }, LOCK + 0.32)
+            .to(bottle, { filter: GLOW, duration: 0.05 }, LOCK + 0.35);
         shared.sourceST = sourceTl.scrollTrigger;
-
-        // La section reste accrochée un moment une fois en haut de l'écran : on profite de la bouteille illuminée
-        shared.sourcePinST = ScrollTrigger.create({
-            trigger: source,
-            start: 'top top',
-            end: '+=60%',
-            pin: true,
-            anticipatePin: 1,
-        });
 
         return () => {
             shared.handoff = false;
@@ -639,7 +645,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Étapes cliquables : défilement doux jusqu'au début de l'étape
     stepEls.forEach((step, i) => {
         step.querySelector('[data-progress-go]')?.addEventListener('click', () => {
-            const target = Math.round(marks[i]) + (i ? 2 : 0);
+            // 05 — Recyclage : on arrive sur le titre « De la bouteille au fil. » (après le pin de la Source)
+            const target = i === stepEls.length - 1 ? Math.round(Math.max(marks[i], pageTop(recycle))) : Math.round(marks[i]) + (i ? 2 : 0);
             shared.navigating = true;
             if (i >= 2) shared.finishSeq?.(); // on va au-delà de la chute : séquence terminée d'office
             let finished = false;
