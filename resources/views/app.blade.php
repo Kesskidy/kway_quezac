@@ -202,17 +202,17 @@
 
             <div class="mt-24 flex flex-col gap-24 lg:gap-32">
                 <article data-terre-card class="w-full max-w-85 rounded-2xl border border-white/15 bg-nuit/80 px-5.5 py-5 transition-[border-color,background-color,box-shadow] duration-500 data-wet:border-source/80 data-wet:bg-source/10 data-wet:shadow-[0_0_40px_rgb(85_136_184/0.35)]">
-                    <p class="text-xs font-semibold tracking-[.16em] text-sauge uppercase">Couche 1 · Mg</p>
+                    <p class="text-xs font-semibold tracking-[.16em] text-sauge uppercase">Mg</p>
                     <h3 class="mt-1.5 text-3xl font-bold tracking-[-0.02em]">Magnésium</h3>
                     <p class="mt-2 leading-normal text-white/85">La goutte entre dans la roche. Premier passage, premiers minéraux.</p>
                 </article>
                 <article data-terre-card class="w-full max-w-85 self-end rounded-2xl border border-white/15 bg-nuit/80 px-5.5 py-5 transition-[border-color,background-color,box-shadow] duration-500 data-wet:border-source/80 data-wet:bg-source/10 data-wet:shadow-[0_0_40px_rgb(85_136_184/0.35)]">
-                    <p class="text-xs font-semibold tracking-[.16em] text-white/75 uppercase">Couche 2 · Ca</p>
+                    <p class="text-xs font-semibold tracking-[.16em] text-white/75 uppercase">Ca</p>
                     <h3 class="mt-1.5 text-3xl font-bold tracking-[-0.02em]">Calcium</h3>
                     <p class="mt-2 leading-normal text-white/85">Elle ralentit et se charge. La pierre calcaire lui donne sa structure.</p>
                 </article>
                 <article data-terre-card class="w-full max-w-85 rounded-2xl border border-white/15 bg-nuit/80 px-5.5 py-5 transition-[border-color,background-color,box-shadow] duration-500 data-wet:border-source/80 data-wet:bg-source/10 data-wet:shadow-[0_0_40px_rgb(85_136_184/0.35)]">
-                    <p class="text-xs font-semibold tracking-[.16em] text-source uppercase">Couche 3 · HCO₃⁻</p>
+                    <p class="text-xs font-semibold tracking-[.16em] text-source uppercase">HCO₃⁻</p>
                     <h3 class="mt-1.5 text-3xl font-bold tracking-[-0.02em]">Bicarbonates</h3>
                     <p class="mt-2 leading-normal text-white/85">Dernier passage : l’eau devient pétillante. Les premières bulles apparaissent.</p>
                 </article>
@@ -221,7 +221,7 @@
     </section>
 
     {{-- ============ 04 — SOURCE / QUÉZAC ============ --}}
-    <section id="source" data-source aria-labelledby="titre-source" class="relative flex min-h-svh items-center overflow-x-clip bg-nuit pt-24 pb-30">
+    <section id="source" data-source aria-labelledby="titre-source" class="relative z-10 flex min-h-svh items-center overflow-x-clip bg-nuit pt-24 pb-30">
         <div class="pointer-events-none absolute top-0 left-1/2 size-200 -translate-x-1/2 rounded-full bg-radial from-source/30 to-transparent to-60%" aria-hidden="true"></div>
 
         {{-- La goutte qui part du point commun (fin de la section Terre) et tombe dans le goulot --}}
@@ -258,40 +258,39 @@
     {{-- ============ 05 — RECYCLAGE ============ --}}
     <section id="recyclage" aria-labelledby="titre-recyclage" class="relative overflow-hidden bg-white py-30 text-nuit">
         <div class="mx-auto max-w-7xl px-8">
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(min(420px,100%),1fr))] items-end gap-14">
-                <div>
-                    <h2 id="titre-recyclage" class="text-[clamp(40px,5vw,68px)] leading-[0.98] font-bold tracking-[-0.03em]">De la bouteille au fil.</h2>
-                    <p class="mt-5 max-w-140 text-xl leading-normal text-nuit/80">Les bouteilles Quézac vides sont collectées, puis transformées en fil de polyester recyclé. Ce fil devient le tissu de la veste RE·SOURCE.</p>
-                </div>
-
-                {{-- Chiffre clé --}}
-                <div class="rounded-[28px] bg-nuit p-9 text-white">
-                    <p class="text-xs font-semibold tracking-[.16em] text-source uppercase">Il faut environ</p>
-                    <p class="mt-3 flex items-baseline gap-4 font-serif font-bold"><span class="text-[96px] leading-none text-zip">12</span><span class="text-3xl leading-tight">bouteilles<br>pour 1 veste</span></p>
-                    <p class="mt-5 text-sm leading-relaxed text-white/75">Estimation : environ 180 g de tissu polyester par veste, environ 18 g de PET par bouteille de 50 cl, et environ 15 % de matière perdue au recyclage. À confirmer avec le fabricant.</p>
-                </div>
+            <div>
+                {{-- devant la bouteille qui vient se glisser derrière (section Source en z-10) --}}
+                <h2 id="titre-recyclage" data-recycle-title class="relative z-30 text-[clamp(40px,5vw,68px)] leading-[0.98] font-bold tracking-[-0.03em]">De la bouteille au fil.</h2>
+                <p class="relative z-30 mt-5 max-w-140 text-xl leading-normal text-nuit/80">Les bouteilles Quézac vides sont collectées, puis transformées en fil de polyester recyclé. Ce fil devient le tissu de la veste RE·SOURCE.</p>
             </div>
 
-            <ol class="mt-16 grid grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))] gap-6 border-t border-nuit/15 pt-10">
-                <li class="flex flex-col gap-3">
+            {{-- Le fil (bordure du haut) : chaque visuel est à cheval dessus, centré sur la ligne, sans fond.
+                 lg:pt-32 = 8rem sous le fil → bas du visuel à 100% + 8rem − (sa hauteur / 2). Bouteille h-54 → 100% + 1.25rem ; paillettes h-36 → 100% + 3.5rem. En dessous de lg (étapes empilées), il reste au-dessus de son étape --}}
+            <ol class="mt-16 grid grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))] gap-6 border-t border-nuit/15 pt-10 lg:mt-36 lg:pt-32">
+                <li class="relative flex flex-col gap-3">
+                    {{-- une bouteille Quézac, droite. Avec animations : masquée, c'est la bouteille de la section Source qui vient se poser à sa place --}}
+                    <img data-collect-bottle src="{{ asset('images/bouteille-quezac.png') }}" alt="" width="1024" height="1536" loading="lazy" aria-hidden="true" class="mb-2 h-54 w-auto self-center drop-shadow-[0_0_12px_rgb(85_136_184/0.55)] lg:absolute lg:bottom-[calc(100%+1.25rem)] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
                     <p class="font-serif text-4xl font-bold text-source" aria-hidden="true">1</p>
                     <h3 class="text-2xl font-bold tracking-[-0.02em]">Collecte</h3>
-                    <p class="leading-normal text-nuit/80">Les bouteilles vides sont collectées et triées.</p>
+                    <p class="leading-normal text-nuit/80">Les bouteilles vides sont collectées et triées. Il en faudra 12 de 50 cl pour faire un K-Way.</p>
                 </li>
-                <li class="flex flex-col gap-3">
+                <li class="relative flex flex-col gap-3">
+                    <img src="{{ asset('images/paillettes-pet.png') }}" alt="Tas de paillettes de plastique PET transparentes et bleutées, issues de bouteilles broyées" width="420" height="297" loading="lazy" class="mb-2 h-36 w-auto self-center lg:absolute lg:bottom-[calc(100%+3.5rem)] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
                     <p class="font-serif text-4xl font-bold text-source" aria-hidden="true">2</p>
                     <h3 class="text-2xl font-bold tracking-[-0.02em]">Broyage</h3>
-                    <p class="leading-normal text-nuit/80">Lavées puis broyées, elles deviennent des paillettes de PET.</p>
+                    <p class="leading-normal text-nuit/80">Lavées puis broyées, elles deviennent des paillettes de PET. Environ 15 % de la matière se perd en route.</p>
                 </li>
-                <li class="flex flex-col gap-3">
+                <li class="relative flex flex-col gap-3">
+                    <img src="{{ asset('images/bobine-fil.png') }}" alt="Bobine de fil de polyester recyclé bleu" width="246" height="420" loading="lazy" class="mb-2 h-36 w-auto self-center lg:absolute lg:bottom-[calc(100%+3.5rem)] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
                     <p class="font-serif text-4xl font-bold text-source" aria-hidden="true">3</p>
                     <h3 class="text-2xl font-bold tracking-[-0.02em]">Filage</h3>
                     <p class="leading-normal text-nuit/80">Fondues et étirées, les paillettes deviennent un fil de polyester recyclé.</p>
                 </li>
-                <li class="flex flex-col gap-3">
+                <li class="relative flex flex-col gap-3">
+                    <img src="{{ asset('images/veste-face-petite.png') }}" alt="Veste RE·SOURCE K-Way × Quézac de face" width="364" height="420" loading="lazy" class="mb-2 h-36 w-auto self-center lg:absolute lg:bottom-[calc(100%+3.5rem)] lg:left-1/2 lg:-translate-x-1/2 lg:mb-0">
                     <p class="font-serif text-4xl font-bold text-zip" aria-hidden="true">4</p>
                     <h3 class="text-2xl font-bold tracking-[-0.02em]">Tissage</h3>
-                    <p class="leading-normal text-nuit/80">Le fil est tissé, rendu déperlant, et devient une veste K-Way.</p>
+                    <p class="leading-normal text-nuit/80">Le fil est tissé, rendu déperlant, et devient une veste K-Way : environ 180 g de tissu par veste.</p>
                 </li>
             </ol>
 
@@ -312,46 +311,6 @@
         </div>
     </section>
 
-    {{-- ============ VALEURS ============ --}}
-    <section id="valeurs" aria-labelledby="titre-valeurs" class="relative overflow-hidden bg-nuit py-30">
-        <div class="pointer-events-none absolute -top-60 left-1/2 h-150 w-275 -translate-x-1/2 rounded-full bg-radial from-source/15 to-transparent to-65%" aria-hidden="true"></div>
-        <div class="relative mx-auto max-w-7xl px-8">
-            <div class="max-w-205">
-                <p class="text-xs font-semibold tracking-[.16em] text-source uppercase">Valeurs communes</p>
-                <h2 id="titre-valeurs" class="mt-3.5 text-[clamp(40px,5vw,68px)] leading-[0.98] font-bold tracking-[-0.03em]">Quatre valeurs, une même eau.</h2>
-                <p class="mt-5 text-xl leading-normal text-white/85">K-Way protège de l’eau qui tombe, Quézac offre l’eau qui désaltère. Deux marques françaises, un seul cycle : c’est pour ça qu’est née RE·SOURCE.</p>
-            </div>
-
-            <div class="mt-16 grid grid-cols-[repeat(auto-fit,minmax(min(270px,100%),1fr))] gap-5">
-                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
-                    <p class="text-[13px] font-semibold tracking-[.14em] text-source">01</p>
-                    <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">L’élément<br>Eau</h3>
-                    <p class="text-[17px] leading-relaxed text-white/85">Protection extérieure d’un côté, hydratation intérieure de l’autre. La même eau, vécue de deux façons.</p>
-                    <p class="mt-auto flex items-center gap-2.5 text-sm font-semibold"><span class="text-zip">K-Way</span><span class="h-px flex-1 bg-white/25" aria-hidden="true"></span><span class="text-source">Quézac</span></p>
-                </article>
-                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
-                    <p class="text-[13px] font-semibold tracking-[.14em] text-source">02</p>
-                    <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">Héritage &amp;<br>Authenticité</h3>
-                    <p class="text-[17px] leading-relaxed text-white/85">Deux marques pionnières du patrimoine français, qui unissent tradition et innovation.</p>
-                    <p class="mt-auto flex items-baseline gap-3.5 font-serif text-[44px] font-bold tracking-[-0.02em]"><span class="text-source">1901</span><span class="h-px flex-1 bg-white/25" aria-hidden="true"></span><span class="text-zip">1965</span></p>
-                    <p class="flex justify-between text-[13px] text-white/75"><span>Quézac</span><span>K-Way</span></p>
-                </article>
-                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
-                    <p class="text-[13px] font-semibold tracking-[.14em] text-source">03</p>
-                    <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">Nature &amp;<br>Mouvement</h3>
-                    <p class="text-[17px] leading-relaxed text-white/85">L’esprit de découverte, l’outdoor nomade, le mouvement. Un sentier, une veste, une gourde.</p>
-                    <p class="mt-auto text-sm text-sauge">GR70</p>
-                </article>
-                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl bg-zip p-7.5 text-nuit">
-                    <p class="text-[13px] font-bold tracking-[.14em]">04</p>
-                    <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">Engagement</h3>
-                    <blockquote><p class="font-serif text-[22px] leading-tight font-bold">« Un patrimoine à boire, un avenir à bâtir. »</p></blockquote>
-                    <p class="leading-normal">Transformer une ressource minérale et son emballage en un vêtement durable.</p>
-                </article>
-            </div>
-        </div>
-    </section>
-
     {{-- ============ PRODUIT ============ --}}
     <section id="collection" aria-labelledby="titre-collection" class="bg-white py-30 text-nuit">
         <div class="mx-auto max-w-7xl px-8">
@@ -362,20 +321,22 @@
             </div>
 
             <div class="mt-16 grid grid-cols-[repeat(auto-fit,minmax(min(480px,100%),1fr))] items-start gap-14">
-                {{-- Visuel : image principale + miniatures (une seule photo pour l'instant : changer data-src / data-alt sur chaque miniature) --}}
+                {{-- Visuel : image principale + miniatures. data-fit="contain" = visuel détouré (veste entière sur fond clair), sinon photo plein cadre --}}
                 <div data-gallery class="flex flex-col gap-4">
-                    <figure class="relative aspect-[3/2] overflow-hidden rounded-[28px] bg-nuit">
-                        <img data-gallery-main src="{{ asset('images/veste-resource.jpg') }}" alt="Veste RE·SOURCE K-Way × Quézac posée sur des roches mouillées, avec le tracé du GR70 brodé sur la manche" width="1264" height="843" class="size-full object-cover transition-opacity duration-300">
-                        <p class="absolute top-6 left-6 inline-flex min-h-9 items-center rounded-full bg-nuit px-4 text-[13px] font-semibold text-white">Édition collaboration</p>
+                    <figure class="relative aspect-[5/4] overflow-hidden rounded-[28px] bg-source/15">
+                        <img data-gallery-main data-fit="contain" src="{{ asset('images/veste-face.png') }}" alt="Veste RE·SOURCE K-Way × Quézac de face : bleu nuit, griffes cuivrées sur l’épaule droite et tracé du GR70 sur la manche gauche" width="1222" height="1287" class="size-full object-cover object-top transition-opacity duration-300 data-[fit=contain]:object-contain data-[fit=contain]:p-6">
                     </figure>
-                    <div class="grid grid-cols-3 gap-4">
-                        <button type="button" data-gallery-thumb data-src="{{ asset('images/veste-resource.jpg') }}" data-alt="Veste RE·SOURCE K-Way × Quézac posée sur des roches mouillées, avec le tracé du GR70 brodé sur la manche" aria-pressed="true" aria-label="Voir la photo 1" class="aspect-[2/1] cursor-pointer overflow-hidden rounded-2xl border-2 border-transparent bg-nuit opacity-70 transition hover:opacity-100 aria-pressed:border-nuit aria-pressed:opacity-100">
-                            <img src="{{ asset('images/veste-resource.jpg') }}" alt="" width="1264" height="843" loading="lazy" class="size-full object-cover">
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <button type="button" data-gallery-thumb data-fit="contain" data-src="{{ asset('images/veste-face.png') }}" data-alt="Veste RE·SOURCE K-Way × Quézac de face : bleu nuit, griffes cuivrées sur l’épaule droite et tracé du GR70 sur la manche gauche" aria-pressed="true" aria-label="Voir la veste de face" class="size-20 cursor-pointer overflow-hidden rounded-xl border-2 border-transparent bg-source/15 opacity-70 transition hover:opacity-100 aria-pressed:border-nuit aria-pressed:opacity-100">
+                            <img src="{{ asset('images/veste-face.png') }}" alt="" width="1222" height="1287" loading="lazy" class="size-full object-contain p-1">
                         </button>
-                        <button type="button" data-gallery-thumb data-src="{{ asset('images/veste-resource.jpg') }}" data-alt="Veste RE·SOURCE K-Way × Quézac posée sur des roches mouillées, avec le tracé du GR70 brodé sur la manche" aria-pressed="false" aria-label="Voir la photo 2" class="aspect-[2/1] cursor-pointer overflow-hidden rounded-2xl border-2 border-transparent bg-nuit opacity-70 transition hover:opacity-100 aria-pressed:border-nuit aria-pressed:opacity-100">
-                            <img src="{{ asset('images/veste-resource.jpg') }}" alt="" width="1264" height="843" loading="lazy" class="size-full object-cover">
+                        <button type="button" data-gallery-thumb data-fit="contain" data-src="{{ asset('images/veste-profil.png') }}" data-alt="Veste RE·SOURCE K-Way × Quézac de profil : capuche, griffes cuivrées et inscription GR70° le long du tracé sur la manche" aria-pressed="false" aria-label="Voir la veste de profil" class="size-20 cursor-pointer overflow-hidden rounded-xl border-2 border-transparent bg-source/15 opacity-70 transition hover:opacity-100 aria-pressed:border-nuit aria-pressed:opacity-100">
+                            <img src="{{ asset('images/veste-profil.png') }}" alt="" width="1222" height="1287" loading="lazy" class="size-full object-contain p-1">
                         </button>
-                        <button type="button" data-gallery-thumb data-src="{{ asset('images/veste-resource.jpg') }}" data-alt="Veste RE·SOURCE K-Way × Quézac posée sur des roches mouillées, avec le tracé du GR70 brodé sur la manche" aria-pressed="false" aria-label="Voir la photo 3" class="aspect-[2/1] cursor-pointer overflow-hidden rounded-2xl border-2 border-transparent bg-nuit opacity-70 transition hover:opacity-100 aria-pressed:border-nuit aria-pressed:opacity-100">
+                        <button type="button" data-gallery-thumb data-fit="cover" data-src="{{ asset('images/veste-foret.jpg') }}" data-alt="Randonneuse portant la veste RE·SOURCE dans une forêt des Cévennes, mains dans les poches" aria-pressed="false" aria-label="Voir la veste portée en forêt" class="size-20 cursor-pointer overflow-hidden rounded-xl border-2 border-transparent bg-nuit opacity-70 transition hover:opacity-100 aria-pressed:border-nuit aria-pressed:opacity-100">
+                            <img src="{{ asset('images/veste-foret.jpg') }}" alt="" width="1086" height="1448" loading="lazy" class="size-full object-cover object-top">
+                        </button>
+                        <button type="button" data-gallery-thumb data-fit="cover" data-src="{{ asset('images/veste-resource.jpg') }}" data-alt="Veste RE·SOURCE K-Way × Quézac posée sur des roches mouillées, avec le tracé du GR70 brodé sur la manche" aria-pressed="false" aria-label="Voir la veste sur les roches" class="size-20 cursor-pointer overflow-hidden rounded-xl border-2 border-transparent bg-nuit opacity-70 transition hover:opacity-100 aria-pressed:border-nuit aria-pressed:opacity-100">
                             <img src="{{ asset('images/veste-resource.jpg') }}" alt="" width="1264" height="843" loading="lazy" class="size-full object-cover">
                         </button>
                     </div>
@@ -450,6 +411,46 @@
                 {{-- carte : Le Puy-en-Velay · Langogne · Le Bleymard · Florac · Saint-Jean-du-Gard · Source Quézac --}}
                 <div class="aspect-square w-full rounded-2xl border border-dashed border-source/40" aria-hidden="true"></div>
             </aside>
+        </div>
+    </section>
+
+    {{-- ============ VALEURS ============ --}}
+    <section id="valeurs" aria-labelledby="titre-valeurs" class="relative overflow-hidden bg-nuit py-30">
+        <div class="pointer-events-none absolute -top-60 left-1/2 h-150 w-275 -translate-x-1/2 rounded-full bg-radial from-source/15 to-transparent to-65%" aria-hidden="true"></div>
+        <div class="relative mx-auto max-w-7xl px-8">
+            <div class="max-w-205">
+                <p class="text-xs font-semibold tracking-[.16em] text-source uppercase">Valeurs communes</p>
+                <h2 id="titre-valeurs" class="mt-3.5 text-[clamp(40px,5vw,68px)] leading-[0.98] font-bold tracking-[-0.03em]">Quatre valeurs, une même eau.</h2>
+                <p class="mt-5 text-xl leading-normal text-white/85">K-Way protège de l’eau qui tombe, Quézac offre l’eau qui désaltère. Deux marques françaises, un seul cycle : c’est pour ça qu’est née RE·SOURCE.</p>
+            </div>
+
+            <div class="mt-16 grid grid-cols-[repeat(auto-fit,minmax(min(270px,100%),1fr))] gap-5">
+                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
+                    <p class="text-[13px] font-semibold tracking-[.14em] text-source">01</p>
+                    <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">L’élément<br>Eau</h3>
+                    <p class="text-[17px] leading-relaxed text-white/85">Protection extérieure d’un côté, hydratation intérieure de l’autre. La même eau, vécue de deux façons.</p>
+                    <p class="mt-auto flex items-center gap-2.5 text-sm font-semibold"><span class="text-zip">K-Way</span><span class="h-px flex-1 bg-white/25" aria-hidden="true"></span><span class="text-source">Quézac</span></p>
+                </article>
+                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
+                    <p class="text-[13px] font-semibold tracking-[.14em] text-source">02</p>
+                    <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">Héritage &amp;<br>Authenticité</h3>
+                    <p class="text-[17px] leading-relaxed text-white/85">Deux marques pionnières du patrimoine français, qui unissent tradition et innovation.</p>
+                    <p class="mt-auto flex items-baseline gap-3.5 font-serif text-[44px] font-bold tracking-[-0.02em]"><span class="text-source">1901</span><span class="h-px flex-1 bg-white/25" aria-hidden="true"></span><span class="text-zip">1965</span></p>
+                    <p class="flex justify-between text-[13px] text-white/75"><span>Quézac</span><span>K-Way</span></p>
+                </article>
+                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl border border-white/15 bg-white/5 p-7.5">
+                    <p class="text-[13px] font-semibold tracking-[.14em] text-source">03</p>
+                    <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">Nature &amp;<br>Mouvement</h3>
+                    <p class="text-[17px] leading-relaxed text-white/85">L’esprit de découverte, l’outdoor nomade, le mouvement. Un sentier, une veste, une gourde.</p>
+                    <p class="mt-auto text-sm text-sauge">GR70</p>
+                </article>
+                <article class="flex min-h-95 flex-col gap-4.5 rounded-3xl bg-zip p-7.5 text-nuit">
+                    <p class="text-[13px] font-bold tracking-[.14em]">04</p>
+                    <h3 class="text-3xl leading-[1.05] font-bold tracking-[-0.02em]">Engagement</h3>
+                    <blockquote><p class="font-serif text-[22px] leading-tight font-bold">« Un patrimoine à boire, un avenir à bâtir. »</p></blockquote>
+                    <p class="leading-normal">Transformer une ressource minérale et son emballage en un vêtement durable.</p>
+                </article>
+            </div>
         </div>
     </section>
 
