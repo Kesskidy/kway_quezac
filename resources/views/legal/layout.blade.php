@@ -7,7 +7,7 @@
         <h1 class="font-serif text-4xl font-bold text-white">@yield('title')</h1>
 
         <p class="mt-8 rounded-2xl border border-zip/60 p-5 text-white">
-            <strong>Projet fictif.</strong> Projet étudiant, sans lien avec les marques K-Way et Quézac.
+            Projet étudiant, sans lien avec les marques K-Way et Quézac.
             Aucun lot n’est réellement attribué et aucune vente n’est réalisée.
         </p>
 

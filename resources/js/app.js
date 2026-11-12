@@ -2,12 +2,16 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initGame } from './game/game';
 import { initRulesModal } from './rules-modal';
+import { initOrderModal } from './order-modal';
+import { initSimpleForms } from './simple-form';
 
 gsap.registerPlugin(ScrollTrigger);
 
 document.addEventListener('DOMContentLoaded', () => {
     initGame(); // jeu concours (#game) : en premier, indépendant des scènes animées plus bas
     initRulesModal(); // règlement du jeu en modale
+    initOrderModal(); // confirmation de la précommande
+    initSimpleForms(); // inscriptions newsletter et Expédition RE·SOURCE
     const mm = gsap.matchMedia();
     const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Mise en page desktop (lg = 64rem) : en dessous, version mobile/tablette des scènes
@@ -81,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         // repassage en desktop menu ouvert : on le referme
-        window.matchMedia('(min-width: 48rem)').addEventListener('change', (e) => e.matches && setMenu(false));
+        window.matchMedia('(min-width: 64rem)').addEventListener('change', (e) => e.matches && setMenu(false));
     }
 
     // ============ RETOUR EN HAUT ============
@@ -101,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // ============ COLLECTION : choix de la taille ============
-    // (boutons radio du formulaire de précommande : la taille choisie s'affiche dans la légende et le bouton)
+    // (boutons radio du formulaire de précommande : la taille choisie s'affiche dans la légende)
     document.querySelectorAll('[data-size-group]').forEach((group) => {
         const labels = document.querySelectorAll('[data-size-label]');
         group.addEventListener('change', (e) => {
@@ -710,6 +714,31 @@ document.addEventListener('DOMContentLoaded', () => {
             gsap.set(bottle, { clearProps: 'filter' });
             Object.assign(shared, { handoff: false, renderTerre: null, terreST: null, sourceST: null, sourcePinST: null });
         };
+    });
+
+    // ============ APPARITION AU SCROLL : fondu des blocs de titres / textes de tout le site ============
+    // Il suffit d'ajouter l'attribut data-reveal sur un bloc HTML existant pour qu'il apparaisse au scroll.
+    // [data-reveal] : fondu + légère montée. [data-reveal="fade"] : fondu seul, pour les blocs de la Terre dont la
+    // position est mesurée pour dessiner les tracés (un décalage fausserait le calcul).
+    // Le Ciel et la Pluie ont déjà leur propre apparition dans la scène accrochée. Créé après les scènes :
+    // les positions tiennent compte de la section Source accrochée (pin).
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+        const blocks = gsap.utils.toArray('[data-reveal]');
+        if (!blocks.length) return;
+
+        const reveal = (batch) =>
+            gsap.to(batch, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power2.out', stagger: 0.12, overwrite: true });
+
+        gsap.set(blocks, { autoAlpha: 0, y: (i, el) => (el.dataset.reveal === 'fade' ? 0 : 40) });
+        ScrollTrigger.batch(blocks, {
+            start: 'clamp(top 85%)', // clamp : un bloc en bas de page (pied de page) apparaît quand même en fin de scroll
+            once: true,
+            onEnter: reveal,
+            onLeave: reveal, // page rechargée plus bas, ou saut direct par un lien : les blocs déjà dépassés restent visibles
+        });
+
+        // Passage en mouvement réduit : tout est affiché normalement
+        return () => gsap.set(blocks, { clearProps: 'opacity,visibility,transform' });
     });
 
     // ============ BARRE DE PROGRESSION : 5 étapes (01 Ciel → 02 Pluie → 03 Terre → 04 Source → 05 Recyclage) ============

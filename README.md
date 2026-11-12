@@ -1,6 +1,6 @@
 # RE·SOURCE — K-Way × Quézac « Du ciel à la source »
 
-> Projet étudiant fictif, sans lien avec les marques K-Way et Quézac.
+> Projet étudiant, sans lien avec les marques K-Way et Quézac.
 
 Site vitrine avec un jeu-concours : le joueur saisit le code de sa bouteille (**1 code = 1 tirage**), le serveur tire le résultat et une animation de 10 secondes le révèle. S'il gagne, il obtient une participation au tirage final des 3 lots (`php artisan lottery:draw`).
 
