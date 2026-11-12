@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class GameSession extends Model
 {
@@ -47,5 +48,13 @@ class GameSession extends Model
     public function promoCode(): BelongsTo
     {
         return $this->belongsTo(PromoCode::class);
+    }
+
+    /**
+     * @return HasOne<Participation, $this>
+     */
+    public function participation(): HasOne
+    {
+        return $this->hasOne(Participation::class);
     }
 }
