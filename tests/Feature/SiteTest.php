@@ -55,6 +55,21 @@ class SiteTest extends TestCase
     {
         $this->get('/admin/participations')->assertUnauthorized();
         $this->get('/admin/participations/export')->assertUnauthorized();
+        $this->get('/admin/qr-codes')->assertUnauthorized();
+    }
+
+    public function test_the_admin_sees_a_qr_code_for_each_promo_code(): void
+    {
+        $admin = User::factory()->create();
+        PromoCode::create(['code' => 'QZK-ABCD-1234']);
+        PromoCode::create(['code' => 'QZK-USED-0000', 'used_at' => now()]);
+
+        $this->actingAs($admin)->get('/admin/qr-codes')
+            ->assertOk()
+            ->assertSee('QZK-ABCD-1234')
+            ->assertSee('Déjà utilisé')
+            ->assertSee(route('landing', ['code' => 'QZK-ABCD-1234']).'#game', false)
+            ->assertSee('data:image/svg+xml;base64,', false);
     }
 
     public function test_the_admin_sees_and_exports_the_participations(): void

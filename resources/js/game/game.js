@@ -39,6 +39,10 @@ export function initGame() {
     };
 
     // ---------- 1. Le code ----------
+    // Arrivée par le QR code de la bouteille (/?code=QZK-XXXX-XXXX#game) : le code est déjà saisi
+    const codeFromUrl = new URLSearchParams(window.location.search).get('code');
+    if (codeFromUrl) codeInput.value = codeFromUrl.trim().toUpperCase().slice(0, 32);
+
     const showCodeError = (message) => {
         codeError.textContent = message;
         if (message) codeInput.setAttribute('aria-invalid', 'true');
